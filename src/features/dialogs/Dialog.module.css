@@ -1,0 +1,165 @@
+.dialog {
+  position: absolute;
+  min-width: 200px;
+  min-height: 200px;
+  background-color: #fafafa;
+  box-shadow: 0px 0px 2px 0px rgb(150, 150, 150);
+  border-radius: 5px;
+  overflow: hidden;
+  transition: top, left, right, bottom, width, height, transform, box-shadow, border-radius 4s ease-in-out;
+}
+.dialog::after {
+  content: '';
+  position: absolute;
+  inset: 32px 0 0 0;
+}
+
+.dialog.focused::after {
+  display: none;
+}
+
+.dialog.maximized {
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 50px !important;
+  width: 100% !important;
+  height: calc(100% - 50px) !important;
+  transform: translate(0px) !important;
+  box-shadow: 0px 0px 0px !important;
+  border-radius: 0px !important;
+}
+
+.header {
+  background-color: lightgray;
+  overflow: hidden;
+  border-radius: 5px 5px 0 0;
+  cursor: default;
+  color: dimgray;
+  text-align: left;
+  user-select: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 5px;
+  height: 32px;
+  padding: 0 4px;
+  transition: background 0.1s ease-in-out, color 0.1s ease-in-out;
+}
+.dialog.maximized .header {
+  border-radius: 0;
+}
+.header_icon {
+  background-color: darkcyan;
+  border-radius: 3px;
+  cursor: default;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.header_title {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  cursor: default;
+  flex-grow: 1;
+}
+
+.header_action {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+  cursor: default;
+  text-align: center;
+  flex-shrink: 0;
+  transition: background 0.1s ease-in-out, color 0.1s ease-in-out;
+}
+
+.header_close {
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>');
+}
+
+.header_maximize {
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" d="M 6,18 V 6 H 18 V 18 H 6"/></svg>');
+}
+
+.header_minimize {
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" d="M 6,18 H 18" /></svg>');
+}
+
+.focused {
+  box-shadow: 1px 1px 4px rgb(60, 60, 60);
+}
+
+.focused > .header {
+  background-color: dimgray;
+  color: white;
+}
+
+.focused .header_close {
+  background-color: brown;
+}
+
+.header_minimize:hover {
+  background-color: cornflowerblue;
+}
+.header_maximize:hover {
+  background-color: goldenrod;
+}
+.header_close:hover {
+  background-color: crimson;
+}
+
+.content {
+  overflow: auto;
+  position: relative;
+  top: 0px;
+  bottom: 0px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: calc(100% - 30px);
+}
+
+.dialog.resizing {
+  opacity: 0.8;
+}
+
+.dialog.resizing .content {
+  background-color: white;
+  visibility: hidden;
+  user-select: none;
+}
+.footer {
+  width: 100%;
+}
+.footer > .resizer {
+  position:absolute;
+  cursor: nwse-resize;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  opacity: 0;
+  transition: opacity 0.1s ease-in-out;
+}
+.footer > .resizer::after {
+  content: "";
+  transform: rotate(45deg);
+  background-color: #aaa;
+  position: absolute;
+  bottom: -10px;
+  right: -10px;
+  width: 20px;
+  height: 20px;
+}
+.focused > .footer > .resizer {
+  opacity: 0.5;
+}
+.focused .footer > .resizer:hover {
+  opacity: 1;
+}
