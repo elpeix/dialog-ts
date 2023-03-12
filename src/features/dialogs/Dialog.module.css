@@ -18,6 +18,18 @@
   display: none;
 }
 
+.maximizeOverlay {
+  position: absolute;
+  transition: all 0.1s ease-in-out;
+  will-change: inset, height, width, background-color;
+}
+.maximizeOverlay.dragToMaximize {
+  inset: 0 0 0 0 !important;
+  height: 100% !important;
+  width: 100% !important;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
 .dialog.maximized {
   top: 0 !important;
   left: 0 !important;
