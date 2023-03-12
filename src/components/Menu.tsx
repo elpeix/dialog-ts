@@ -56,7 +56,7 @@ export default function Menu() {
     <>
       <button onClick={createDialogSample}>Create Dialog</button>
       <button onClick={openUser}>Open user</button>
-      <button onClick={closeAll}>Close All</button>
+      { dialogs.length ? <button onClick={closeAll}>Close All</button> : null }
       {confirm}
     </>
   )

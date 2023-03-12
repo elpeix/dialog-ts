@@ -15,6 +15,8 @@
   --secondary-color-light: #fff4e7;
   --secondary-color-dark: #c67c00;
 
+  --dialogs-footer-height: 50px;
+
   background-color: var(--background-color, #e9e9e9);
   color: var(--color, rgba(48, 48, 48, 0.87));
 
@@ -33,9 +35,6 @@ body.resizing {
   user-select: none;
 }
 
-.react-draggable {
-  transition: opacity 0.1s;
-}
 .react-draggable-dragging {
   opacity: 0.8;
 }

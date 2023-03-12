@@ -1,12 +1,8 @@
 .dialogCanvas {
   position: fixed;
-  top:0;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  inset: 0;
   overflow: hidden;
   background-color:#282828;
-  background-size:16px 16px;
 }
 .dialogsFooter {
   position: fixed;
@@ -14,7 +10,7 @@
   left: 0;
   right: 0;
   background-color:darkseagreen;
-  height: 50px;
+  height: var(--dialogs-footer-height);
   display: flex;
   z-index: 1000;
 }
@@ -24,7 +20,7 @@
   align-items: center;
   justify-content: flex-start;
   gap: 5px;
-  padding: 0 5px;
+  padding: 5px;
   overflow-x: auto;
   overflow-y: hidden;
   height: 100%;
@@ -32,17 +28,18 @@
 .dialogsFooter .dialogsFooterBar > div {
   min-width: 40px;
   max-width: 200px;
-  height: 40px;
+  height: 100%;
   padding: 0 5px;
   background-color: bisque;
   text-align: center;
   vertical-align: middle;
   border-radius: 3px;
-  line-height: 40px;
   cursor: default;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
   transition: background-color 0.1s ease-in-out;
 }
 .dialogsFooter .dialogsFooterBar > div:hover {
