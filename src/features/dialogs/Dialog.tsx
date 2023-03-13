@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import { dialogActions } from './dialogSlice'
 import { DialogType } from './types'
 import styles from './Dialog.module.css'
-import Draggable from 'react-draggable'
+import DialogDraggable from './DialogDraggable'
 
 export default function Dialog(props: DialogType) {
   const [dialog, setDialog] = useState({
@@ -21,7 +21,6 @@ export default function Dialog(props: DialogType) {
   const dispatch = useDispatch()
   const dialogRef = useRef<HTMLDivElement>(null)  as MutableRefObject<HTMLDivElement>
   const dialogContent = useRef<HTMLDivElement>(null)  as MutableRefObject<HTMLDivElement>
-  const draggableRef = useRef<Draggable>(null)  as MutableRefObject<Draggable>
   const [dragToMaximize, setDragToMaximize] = useState(false)
 
   const toTop = useCallback(() => {
@@ -92,14 +91,10 @@ export default function Dialog(props: DialogType) {
 
   return (
     <>
-      <Draggable
-        handle="header.dialog-drag" 
-        cancel=".dialog-no-drag" 
-        ref={draggableRef}
+      <DialogDraggable
         bounds={bounds} 
-        nodeRef={dialogRef}
         onStart={() => {toTop()}}
-        onDrag={ (e) => {
+        onDrag={(e) => {
           if (dialog.maximized) {
             if (e instanceof MouseEvent && e.pageY > 20) {
               setDialog(ov => ({ ...ov, maximized: false }))
@@ -139,7 +134,7 @@ export default function Dialog(props: DialogType) {
             {!dialog.maximized && <div className={styles.resizer} onMouseDown={handleResize}></div>}
           </div>
         </div>
-      </Draggable>
+      </DialogDraggable>
       {!dialog.maximized && props.config.focused &&
         <div 
           className={`${styles.maximizeOverlay} ${dragToMaximize ? styles.dragToMaximize : ''}`} 

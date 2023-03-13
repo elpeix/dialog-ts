@@ -13,7 +13,6 @@ export default function DialogCanvas() {
 
   const toTop = (id: string) => dispatch(dialogActions.toTop({id: id}))
 
-
   return (
     <div className={styles.dialogCanvas}>
       <div className={styles.dialogs}>
