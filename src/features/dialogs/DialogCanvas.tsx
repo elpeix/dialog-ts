@@ -2,9 +2,9 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { dialogActions, dialogsState } from './dialogSlice'
 import { DialogsStateType, DialogType } from './types'
-import Dialog from './Dialog'
 import styles from './DialogCanvas.module.css'
 import Menu from '../../components/Menu'
+import Dialog from './Dialog'
 
 export default function DialogCanvas() {
 

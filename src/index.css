@@ -35,10 +35,6 @@ body.resizing {
   user-select: none;
 }
 
-.react-draggable-dragging {
-  opacity: 0.8;
-}
-
 button {
   background-color: var(--secondary-color);
   border: none;
