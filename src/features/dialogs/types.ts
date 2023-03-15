@@ -22,4 +22,5 @@ export type DialogConfigType = {
   parent: string,
   left: number,
   top: number,
+  resizable: boolean,
 }

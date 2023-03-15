@@ -95,7 +95,7 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
       if (config.top + y > 20) {
         setMaximized(MaximizedValues.NONE)
       }
-    } else {
+    } else if (config.resizable) {
       if (data.y < 0) {
         setDragToMaximize(MaximizedValues.FULL)
       } else if (data.x < 10) {
@@ -120,6 +120,7 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
   }
 
   const handleResize = (mouseDownEvent: { pageX: number; pageY: number }) => {
+    if (!config.resizable && maximized !== MaximizedValues.NONE) return
     const size = {
       width: dialog.width,
       height: dialog.height
@@ -195,14 +196,18 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
             <div className={styles.header_icon}>&nbsp;</div>
             <div className={styles.header_title}>{title}</div>
             <div className={`dialog-no-drag ${styles.header_action} ${styles.header_minimize}`} onClick={toggleMinimize} />
-            <div className={`dialog-no-drag ${styles.header_action} ${styles.header_maximize}`} onClick={toggleMaximize} />
+            { config.resizable && 
+              <div className={`dialog-no-drag ${styles.header_action} ${styles.header_maximize}`} onClick={toggleMaximize} />
+            } 
             <div className={`dialog-no-drag ${styles.header_action} ${styles.header_close}`} onClick={close} />
           </header>
           <div className={styles.content} ref={dialogContent}>
             {children}
           </div>
           <div className={styles.footer}>
-            {!maximized && <div className={styles.resizer} onMouseDown={handleResize}></div>}
+            {config.resizable && !maximized && 
+              <div className={styles.resizer} onMouseDown={handleResize}></div>
+            }
           </div>
         </div>
       </DraggableCore>

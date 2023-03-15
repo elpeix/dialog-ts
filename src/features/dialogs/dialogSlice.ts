@@ -31,6 +31,7 @@ const dialogsSlice = createSlice({
           parent: action.payload.config.parent,
           left: state.position.left,
           top: state.position.top,
+          resizable: action.payload.config.resizable ?? true,
           zIndex: getMaxZIndex(state.dialogs) + 1,
         },
         children: action.payload.children
