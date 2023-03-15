@@ -20,14 +20,27 @@
 
 .maximizeOverlay {
   position: absolute;
-  transition: all 0.1s ease-in-out;
+  background-color: rgba(255, 255, 255, 0);
   will-change: inset, height, width, background-color;
+  transition: all 0.1s ease-in-out;
 }
-.maximizeOverlay.dragToMaximize {
+.maximizeOverlayActive {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+.maximizeOverlayFull {
   inset: 0;
   height: 100%;
   width: 100%;
-  background-color: rgba(255, 255, 255, 0.2);
+}
+.maximizeOverlayLeft {
+  inset: 0;
+  height: 100%;
+  width: 50%;
+}
+.maximizeOverlayRight {
+  inset: 0 0 0 50%;
+  height: 100%;
+  width: 50%;
 }
 
 .dialog.maximized {
@@ -40,6 +53,21 @@
   transform: translate(0) !important;
   box-shadow: navajowhite;
   border-radius: 0 !important;
+}
+.dialog.maximizedFull {
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+}
+.dialog.maximizedLeft {
+  left: 0 !important;
+  right: 0 !important;
+  width: 50% !important;
+}
+.dialog.maximizedRight {
+  left: 50% !important;
+  right: 0 !important;
+  width: 50% !important;
 }
 
 .header {
@@ -57,7 +85,7 @@
   gap: 5px;
   height: 32px;
   padding: 0 4px;
-  transition: background 0.1s ease-in-out, color 0.1s ease-in-out;
+  transition: background 0.05s linear, color 0.05s ease-in-out;
 }
 .dialog.maximized .header {
   border-radius: 0;

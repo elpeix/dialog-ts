@@ -29,7 +29,7 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
   const [position, setPosition] = useState({x: 0, y: 0})
   const [slack, setSlack] = useState({x: 0, y: 0})
   const [maximized, setMaximized] = useState(MaximizedValues.NONE)
-  const [dragToMaximize, setDragToMaximize] = useState(false)
+  const [dragToMaximize, setDragToMaximize] = useState(MaximizedValues.NONE)
 
   const dialogRef = useRef<HTMLDivElement>(null)  as MutableRefObject<HTMLDivElement>
   const dialogContent = useRef<HTMLDivElement>(null)  as MutableRefObject<HTMLDivElement>
@@ -96,17 +96,23 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
         setMaximized(MaximizedValues.NONE)
       }
     } else {
-      setDragToMaximize(data.y < 0)
+      if (data.y < 0) {
+        setDragToMaximize(MaximizedValues.FULL)
+      } else if (data.x < 10) {
+        setDragToMaximize(MaximizedValues.LEFT)
+      } else if (data.x > window.innerWidth) {
+        setDragToMaximize(MaximizedValues.RIGHT)
+      } else {
+        setDragToMaximize(MaximizedValues.NONE)
+      }
     }
     setPosition(newPos)
   }
 
   const stopHandler: DraggableEventHandler = () => {
     if (!dragging) return
-    if (dragToMaximize) {
-      toggleMaximize()
-      setDragToMaximize(false)
-    }
+    setMaximized(dragToMaximize)
+    setDragToMaximize(MaximizedValues.NONE)
     setDragging(false)
     setSlack({x: 0, y: 0})
   }
@@ -153,9 +159,10 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
     ${config.focused ? styles.focused : ''}
     ${resizing ? styles.resizing : ''}
     ${dragging && dragged ? styles.dragging : ''}
-    ${maximized === MaximizedValues.FULL ? styles.maximized : ''}
-    ${maximized === MaximizedValues.LEFT ? 'maximized-left' : ''}
-    ${maximized === MaximizedValues.RIGHT ? 'maximized-right' : ''}
+    ${maximized !== MaximizedValues.NONE ? styles.maximized : ''}
+    ${maximized === MaximizedValues.FULL ? styles.maximizedFull : ''}
+    ${maximized === MaximizedValues.LEFT ? styles.maximizedLeft : ''}
+    ${maximized === MaximizedValues.RIGHT ? styles.maximizedRight : ''}
   `
   const dialogStyle = {
     display: config.minimized ? 'none' : '',
@@ -199,7 +206,12 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
       </DraggableCore>
       {!maximized && dragging &&
         <div 
-          className={`${styles.maximizeOverlay} ${dragToMaximize ? styles.dragToMaximize : ''}`} 
+          className={`
+            ${styles.maximizeOverlay} 
+            ${dragToMaximize !== MaximizedValues.NONE ? styles.maximizeOverlayActive : ''}
+            ${dragToMaximize === MaximizedValues.FULL ? styles.maximizeOverlayFull : ''}
+            ${dragToMaximize === MaximizedValues.LEFT ? styles.maximizeOverlayLeft : ''}
+            ${dragToMaximize === MaximizedValues.RIGHT ? styles.maximizeOverlayRight : ''}`} 
           style={{zIndex: config.zIndex + 1}}></div>
       }
     </>
