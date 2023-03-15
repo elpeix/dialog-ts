@@ -39,13 +39,14 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
   }, [dispatch, id])
 
   const toggleMaximize = useCallback(() => {
+    if (!config.resizable) return
     if (maximized === MaximizedValues.NONE) {
       setMaximized(MaximizedValues.FULL)
     } else {
       setMaximized(MaximizedValues.NONE)
     }
     toTop()
-  }, [maximized, toTop])
+  }, [maximized, toTop, config.resizable])
 
   const bounds = {
     top: -config.top,
