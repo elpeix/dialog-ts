@@ -100,7 +100,7 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
         setDragToMaximize(MaximizedValues.FULL)
       } else if (data.x < 10) {
         setDragToMaximize(MaximizedValues.LEFT)
-      } else if (data.x > window.innerWidth) {
+      } else if (data.x > window.innerWidth - 10) {
         setDragToMaximize(MaximizedValues.RIGHT)
       } else {
         setDragToMaximize(MaximizedValues.NONE)
