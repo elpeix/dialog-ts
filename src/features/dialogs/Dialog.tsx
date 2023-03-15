@@ -204,42 +204,4 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
       }
     </>
   )
-
-  
-
-
-  // DOWN is OK
-
-  // const className = `
-  //   ${children.props.className} ${dragging ? 'dragging' : ''}
-  //   ${maximized === MaximizedType.FULL ? styles.maximized : ''}
-  //   ${maximized === MaximizedType.LEFT ? 'maximized-left' : ''}
-  //   ${maximized === MaximizedType.RIGHT ? 'maximized-right' : ''}
-  // `
-
-  // const style = {
-  //   transform :`translate(${position.x}px, ${position.y}px)`
-  // }
-
-  // return (
-  //   <>
-  //     <DraggableCore
-  //       handle="header.dialog-drag" 
-  //       cancel=".dialog-no-drag"
-  //       onStart={startHandler}
-  //       onDrag={dragHandler}
-  //       onStop={stopHandler}
-  //     > 
-  //       {React.cloneElement(React.Children.only(children), {
-  //         className: className,
-  //         style: {...children.props.style, ...style},
-  //       })}
-  //     </DraggableCore>
-  //     {!maximized && dragging &&
-  //       <div 
-  //         className={`${styles.maximizeOverlay} ${dragToMaximize ? styles.dragToMaximize : ''}`} 
-  //         style={{zIndex: children.props.style.zIndex + 1}}></div>
-  //     }
-  //   </>
-  // )
 }
