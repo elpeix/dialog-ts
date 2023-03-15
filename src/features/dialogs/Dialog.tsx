@@ -111,8 +111,10 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
 
   const stopHandler: DraggableEventHandler = () => {
     if (!dragging) return
-    setMaximized(dragToMaximize)
-    setDragToMaximize(MaximizedValues.NONE)
+    if (dragged) {
+      setMaximized(dragToMaximize)
+      setDragToMaximize(MaximizedValues.NONE)
+    }
     setDragging(false)
     setSlack({x: 0, y: 0})
   }

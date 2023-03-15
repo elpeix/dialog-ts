@@ -6,7 +6,9 @@
   box-shadow: 0 0 2px 0 rgb(150, 150, 150);
   border-radius: 5px;
   overflow: hidden;
-  transition: box-shadow, opacity 0.1s ease-in-out;
+  transition:
+    box-shadow 0.1s ease-in-out,
+    opacity 0.1s ease-in-out;
 }
 .dialog::after {
   content: '';
@@ -133,6 +135,9 @@
 
 .focused {
   box-shadow: 1px 1px 4px rgb(60, 60, 60);
+}
+.maximized.focused {
+  box-shadow: 0px 0px 3px rgb(60, 60, 60);
 }
 
 .focused > .header {
