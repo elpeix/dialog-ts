@@ -134,7 +134,8 @@
   height: calc(100% - 30px);
 }
 
-.dialog.resizing {
+.dialog.resizing,
+.dialog.dragging {
   opacity: 0.8;
 }
 

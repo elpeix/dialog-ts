@@ -41,7 +41,6 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
   const toggleMaximize = useCallback(() => {
     if (maximized === MaximizedValues.NONE) {
       setMaximized(MaximizedValues.FULL)
-      //setPosition({x: position.x, y: -dialog.top})
     } else {
       setMaximized(MaximizedValues.NONE)
     }
@@ -55,28 +54,32 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
     right: window.innerWidth - (30 + config.left) 
   }
 
-  const startHandler: DraggableEventHandler = () => {
+  const startHandler: DraggableEventHandler = (e, data) => {
     setDragging(true)
     setDragged(false)
     toTop()
+
+    if (maximized !== MaximizedValues.NONE) {
+      let x = (data.x - (dialog.width / 2)) * data.x / window.innerWidth
+      if (data.x > dialog.width / 2) {
+        const percent = data.x / window.innerWidth
+        x = (data.x - dialog.width / 2)
+        if (percent < 0.5) {
+          x = x + (dialog.width / 2) * (0.5 - percent)
+        } else {
+          x = x - (dialog.width / 2) * (percent - 0.5)
+        }
+      }
+      setPosition({
+        x: Math.min(Math.max(0, x), window.innerWidth - dialog.width) - dialog.left,
+        y: -dialog.top
+      })
+    }
   }
 
   const dragHandler: DraggableEventHandler = (e, data) => {
     if (!dragging) return
     setDragged(true)
-
-    if (!dragged && maximized !== MaximizedValues.NONE) {
-      let x = position.x
-      if (data.x < window.innerWidth / 3) {
-        x = - dialog.left
-      } else if (data.x < window.innerWidth * 2 / 3) {
-        x = window.innerWidth / 2 - (dialog.left) - dialog.width / 2
-      } else {
-        x = window.innerWidth - (dialog.left + dialog.width)
-      }
-      setPosition({x: x, y: -dialog.top})
-      return
-    }
 
     const newPos = { x: position.x + data.deltaX, y: position.y + data.deltaY }
     const {x, y} = newPos
@@ -149,7 +152,7 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
     ${styles.dialog}
     ${config.focused ? styles.focused : ''}
     ${resizing ? styles.resizing : ''}
-    ${dragging ? styles.dragging : ''}
+    ${dragging && dragged ? styles.dragging : ''}
     ${maximized === MaximizedValues.FULL ? styles.maximized : ''}
     ${maximized === MaximizedValues.LEFT ? 'maximized-left' : ''}
     ${maximized === MaximizedValues.RIGHT ? 'maximized-right' : ''}
