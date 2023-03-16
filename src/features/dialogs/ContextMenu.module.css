@@ -1,0 +1,20 @@
+.contextMenu {
+  position: fixed;
+  min-width: 200px;
+  background-color: white;
+  box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+}
+
+.contextMenu > * {
+  padding: 5px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.contextMenu > *:hover {
+  background-color: #eee;
+}
+

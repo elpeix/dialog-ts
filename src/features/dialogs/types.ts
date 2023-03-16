@@ -22,4 +22,9 @@ export type DialogConfigType = {
   parent: string,
   left: number,
   top: number,
+  contextMenu?: {
+    x: number,
+    y: number,
+    show: boolean
+  }
 }

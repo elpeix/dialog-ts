@@ -13,8 +13,21 @@ export default function DialogCanvas() {
 
   const toTop = (id: string) => dispatch(dialogActions.toTop({id: id}))
 
+  const handleOnClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (e.target === e.currentTarget) {
+      dispatch(dialogActions.clearFocus())
+    }
+    dispatch(dialogActions.hideContextMenu())
+  }
+
+  const handleOnContextMenu = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    e.preventDefault()
+    dispatch(dialogActions.hideContextMenu())
+    // Show general context menu?
+  }
+
   return (
-    <div className={styles.dialogCanvas}>
+    <div className={styles.dialogCanvas} onClick={handleOnClick} onContextMenu={handleOnContextMenu}>
       <div className={styles.dialogs}>
         {dialogs.map((dialog :DialogType) => (
           <Dialog

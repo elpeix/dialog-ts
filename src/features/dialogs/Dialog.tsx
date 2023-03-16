@@ -1,6 +1,7 @@
-import React, { MutableRefObject, useCallback, useRef, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { DraggableCore, DraggableEventHandler } from 'react-draggable'
 import { useDispatch } from 'react-redux'
+import ContextMenu from './ContextMenu'
 import styles from './Dialog.module.css'
 import { dialogActions } from './dialogSlice'
 import { DialogType } from './types'
@@ -30,9 +31,6 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
   const [slack, setSlack] = useState({x: 0, y: 0})
   const [maximized, setMaximized] = useState(MaximizedValues.NONE)
   const [dragToMaximize, setDragToMaximize] = useState(MaximizedValues.NONE)
-
-  const dialogRef = useRef<HTMLDivElement>(null)  as MutableRefObject<HTMLDivElement>
-  const dialogContent = useRef<HTMLDivElement>(null)  as MutableRefObject<HTMLDivElement>
 
   const toTop = useCallback(() => {
     dispatch(dialogActions.toTop({id: id}))
@@ -156,6 +154,13 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
     dispatch(dialogActions.close({ id }))
   }
 
+  const contextMenuHandler = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    dispatch(dialogActions.toTop({id: id}))
+    dispatch(dialogActions.showContextMenu({id: id, x: e.clientX, y: e.clientY}))
+  }
+
   const className = `
     ${styles.dialog}
     ${config.focused ? styles.focused : ''}
@@ -187,18 +192,18 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
       > 
         <div
           className={className}
-          ref={dialogRef}
           style={dialogStyle}
           onClick={toTop}
+          onContextMenu={toTop}
         >
           <header className={`dialog-drag ${styles.header}`} onDoubleClick={toggleMaximize}>
-            <div className={styles.header_icon}>&nbsp;</div>
+            <div className={styles.header_icon} onContextMenu={contextMenuHandler}></div>
             <div className={styles.header_title}>{title}</div>
             <div className={`dialog-no-drag ${styles.header_action} ${styles.header_minimize}`} onClick={toggleMinimize} />
             <div className={`dialog-no-drag ${styles.header_action} ${styles.header_maximize}`} onClick={toggleMaximize} />
             <div className={`dialog-no-drag ${styles.header_action} ${styles.header_close}`} onClick={close} />
           </header>
-          <div className={styles.content} ref={dialogContent}>
+          <div className={styles.content}>
             {children}
           </div>
           <div className={styles.footer}>
@@ -215,6 +220,17 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
             ${dragToMaximize === MaximizedValues.LEFT ? styles.maximizeOverlayLeft : ''}
             ${dragToMaximize === MaximizedValues.RIGHT ? styles.maximizeOverlayRight : ''}`} 
           style={{zIndex: config.zIndex + 1}}></div>
+      }
+      {config.contextMenu && 
+        <ContextMenu 
+          {...config.contextMenu} 
+          zIndex = {config.zIndex * 10 + 1}>
+          <>
+            <div className={styles.contextMenu_item}>Item 1</div>
+            <div className={styles.contextMenu_item}>Item 2</div>
+            <div className={styles.contextMenu_item}>Item 3</div>
+          </>
+        </ContextMenu>
       }
     </>
   )

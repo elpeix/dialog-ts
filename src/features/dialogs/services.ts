@@ -60,3 +60,21 @@ export const toggleMinimize = (dialogs: DialogType[], id: string) => {
   })
   toTopPrevious(dialogs)
 }
+
+export const contextMenu = (dialogs: DialogType[], id: string, x: number, y: number) => {
+  const dialog = getDialog(dialogs, id)
+  if (!dialog) {
+    return
+  }
+  dialog.config.contextMenu = {
+    x,
+    y,
+    show: true
+  }
+}
+
+export const hideContextMenu = (dialogs: DialogType[]) => {
+  dialogs.forEach(dialog => {
+    dialog.config.contextMenu = undefined
+  })
+}

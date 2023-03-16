@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { dialogExists, getMaxZIndex, toggleMinimize, toTop, toTopPrevious } from './services'
+import { contextMenu, dialogExists, getMaxZIndex, hideContextMenu, toggleMinimize, toTop, toTopPrevious } from './services'
 import { DialogsStateType } from './types'
 
 const initialState: DialogsStateType = {
@@ -61,6 +61,16 @@ const dialogsSlice = createSlice({
     },
     toggleMinimize: (state: DialogsStateType, action) => {
       toggleMinimize(state.dialogs, action.payload.id)
+    },
+    showContextMenu: (state: DialogsStateType, action) => {
+      hideContextMenu(state.dialogs)
+      contextMenu(state.dialogs, action.payload.id, action.payload.x, action.payload.y)
+    },
+    hideContextMenu: (state: DialogsStateType, ) => {
+      hideContextMenu(state.dialogs)
+    },
+    clearFocus: (state: DialogsStateType, ) => {
+      state.dialogs.forEach(dialog => dialog.config.focused = false)
     }
   }
 })
