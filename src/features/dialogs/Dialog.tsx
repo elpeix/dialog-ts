@@ -227,14 +227,16 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
             ${dragToMaximize === MaximizedValues.RIGHT ? styles.maximizeOverlayRight : ''}`} 
           style={{zIndex: config.zIndex + 1}}></div>
       }
-      {config.contextMenu && 
+      {!config.minimized && config.contextMenu && 
         <ContextMenu 
           {...config.contextMenu} 
           zIndex = {config.zIndex * 10 + 1}>
           <>
-            <div className={styles.contextMenu_item}>Item 1</div>
-            <div className={styles.contextMenu_item}>Item 2</div>
-            <div className={styles.contextMenu_item}>Item 3</div>
+            <div>{`Id: ${id}`}</div>
+            <div>{`Title: ${title}`}</div>
+            <div onClick={toggleMinimize}>Minimize</div>
+            { config.resizable && <div onClick={toggleMaximize}>Maximize</div> }
+            <div onClick={close}>Close</div>
           </>
         </ContextMenu>
       }
