@@ -26,5 +26,6 @@ export type DialogConfigType = {
     x: number,
     y: number,
     show: boolean
-  }
+  },
+  resizable: boolean
 }

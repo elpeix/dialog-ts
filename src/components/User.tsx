@@ -20,6 +20,7 @@ export function User(props: { name: string; level: number }) {
         config: {
           width: 300,
           height: 200,
+          resizable: false,
         },
         children: (
           <UserChildren />
