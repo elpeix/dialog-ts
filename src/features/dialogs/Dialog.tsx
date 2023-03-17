@@ -54,6 +54,7 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
   }
 
   const startHandler: DraggableEventHandler = (e, data) => {
+    dispatch(dialogActions.hideContextMenu())
     setDragging(true)
     setDragged(false)
     toTop()

@@ -1,17 +1,24 @@
 .contextMenu {
   position: fixed;
-  min-width: 200px;
+  width: 200px;
+  max-height: 300px;
   background-color: white;
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
+  overflow: auto;
+  border-radius: 5px;
 }
 
 .contextMenu > * {
   padding: 5px;
   cursor: pointer;
   text-align: left;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .contextMenu > *:hover {

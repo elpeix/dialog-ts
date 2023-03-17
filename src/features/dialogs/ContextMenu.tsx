@@ -9,6 +9,9 @@ export default function ContextMenu(
     children: React.ReactNode
   }) {
 
+  x = x + 200 > window.innerWidth ? x - 200 : x
+  y = y + 200 > window.innerHeight ? y - 200 : y
+
   const contextMenuStyle = {
     top: `${y}px`,
     left: `${x}px`,
