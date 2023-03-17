@@ -46,7 +46,10 @@ export default function DialogCanvas() {
           {dialogs.map((dialog: DialogType) => (
             <div
               key={`barDialog${dialog.id}`}
-              className={dialog.config.focused ? styles.focused : ''}
+              className={`
+                ${dialog.config.focused ? styles.focused : ''}
+                ${dialog.config.minimized ? styles.minimized : ''}
+              `}
               onClick={() => toTop(dialog.id)}
             >
               {dialog.title}

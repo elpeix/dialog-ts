@@ -33,12 +33,12 @@ export const toTop = (dialogs: DialogType[], id: string) => {
 
 export const toTopPrevious = (dialogs: DialogType[]) => {
   const maxZIndex = getMaxZIndex(dialogs)
-  dialogs = dialogs.map(dialog => {
-    if (!dialog.config.minimized && dialog.config.zIndex === maxZIndex) {
-      dialog.config.focused = true
-    }
-    return dialog
-  })
+  const dialog = dialogs.find(dialog => dialog.config.zIndex === maxZIndex)
+  if (dialog) {
+    dialog.config.focused = true
+  } else if (dialogs.length > 0) {
+    dialogs[dialogs.length - 1].config.focused = true
+  }
 }
 
 export const toggleMinimize = (dialogs: DialogType[], id: string) => {
