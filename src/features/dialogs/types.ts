@@ -1,7 +1,10 @@
-export type DialogType = {
+export type DialogBasicType = {
   id: string,
-  title: string,
-  config: DialogConfigType,
+  title?: string,
+  config: DialogConfigType
+}
+
+export type DialogType = DialogBasicType & {
   children: React.ReactNode
 }
 
@@ -13,9 +16,17 @@ export type DialogsStateType = {
   } 
 }
 
+export const MaximizedValues = {
+  NONE: 0,
+  FULL: 1,
+  LEFT: 2,
+  RIGHT: 3,
+} as const
+
 export type DialogConfigType = {
   focused: boolean,
   minimized: boolean,
+  maximized: number,
   zIndex: number,
   width: number,
   height: number,

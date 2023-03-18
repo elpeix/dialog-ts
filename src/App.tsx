@@ -1,6 +1,6 @@
 import React from 'react'
 import './App.css'
-import DialogCanvas from './features/dialogs/DialogCanvas'
+import DialogCanvas from './components/DialogCanvas'
 
 function App() {
   return (

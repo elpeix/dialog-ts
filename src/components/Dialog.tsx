@@ -1,17 +1,10 @@
-import React, { useCallback, useState } from 'react'
+import React, { useState } from 'react'
 import { DraggableCore, DraggableEventHandler } from 'react-draggable'
 import { useDispatch } from 'react-redux'
-import ContextMenu from './ContextMenu'
 import styles from './Dialog.module.css'
-import { dialogActions } from './dialogSlice'
-import { DialogType } from './types'
-
-const MaximizedValues = {
-  NONE: 0,
-  FULL: 1,
-  LEFT: 2,
-  RIGHT: 3,
-}
+import { dialogActions } from '../features/dialogs/dialogSlice'
+import { DialogType, MaximizedValues } from '../features/dialogs/types'
+import DialogContextMenu from './DialogContextMenu'
 
 export default function Dialog({ id, title, config, children }: DialogType ) {
 
@@ -29,22 +22,15 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
   const [resizing, setResizing] = useState(false)
   const [position, setPosition] = useState({x: 0, y: 0})
   const [slack, setSlack] = useState({x: 0, y: 0})
-  const [maximized, setMaximized] = useState(MaximizedValues.NONE)
-  const [dragToMaximize, setDragToMaximize] = useState(MaximizedValues.NONE)
+  const [dragToMaximize, setDragToMaximize] = useState<number>(MaximizedValues.NONE)
 
-  const toTop = useCallback(() => {
+  const toTop = () => {
     dispatch(dialogActions.toTop({id: id}))
-  }, [dispatch, id])
+  }
 
-  const toggleMaximize = useCallback(() => {
-    if (!config.resizable) return
-    if (maximized === MaximizedValues.NONE) {
-      setMaximized(MaximizedValues.FULL)
-    } else {
-      setMaximized(MaximizedValues.NONE)
-    }
-    toTop()
-  }, [maximized, toTop, config.resizable])
+  const toggleMaximize = () => {
+    dispatch(dialogActions.toggleMaximize({id: id, maximized: MaximizedValues.FULL}))
+  }
 
   const bounds = {
     top: -config.top,
@@ -59,7 +45,7 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
     setDragged(false)
     toTop()
 
-    if (maximized !== MaximizedValues.NONE) {
+    if (config.maximized !== MaximizedValues.NONE) {
       let x = (data.x - (dialog.width / 2)) * data.x / window.innerWidth
       if (data.x > dialog.width / 2) {
         const percent = data.x / window.innerWidth
@@ -91,9 +77,9 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
     }
     setSlack({ x: slack.x + (x - newPos.x), y: slack.y + (y - newPos.y) })
 
-    if (maximized !== MaximizedValues.NONE) {
+    if (config.maximized !== MaximizedValues.NONE) {
       if (config.top + y > 20) {
-        setMaximized(MaximizedValues.NONE)
+        dispatch(dialogActions.toggleMaximize({id: id, maximized: MaximizedValues.NONE}))
       }
     } else if (config.resizable) {
       if (data.y < 0) {
@@ -112,7 +98,7 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
   const stopHandler: DraggableEventHandler = () => {
     if (!dragging) return
     if (dragged) {
-      setMaximized(dragToMaximize)
+      dispatch(dialogActions.toggleMaximize({id: id, maximized: dragToMaximize}))
       setDragToMaximize(MaximizedValues.NONE)
     }
     setDragging(false)
@@ -120,7 +106,7 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
   }
 
   const handleResize = (mouseDownEvent: { pageX: number; pageY: number }) => {
-    if (!config.resizable && maximized !== MaximizedValues.NONE) return
+    if (!config.resizable && config.maximized !== MaximizedValues.NONE) return
     const size = {
       width: dialog.width,
       height: dialog.height
@@ -158,10 +144,7 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
   }
 
   const contextMenuHandler = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    e.preventDefault()
-    e.stopPropagation()
-    dispatch(dialogActions.toTop({id: id}))
-    dispatch(dialogActions.showContextMenu({id: id, x: e.clientX, y: e.clientY}))
+    dispatch(dialogActions.showContextMenu({id: id, event: e}))
   }
 
   const className = `
@@ -169,10 +152,10 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
     ${config.focused ? styles.focused : ''}
     ${resizing ? styles.resizing : ''}
     ${dragging && dragged ? styles.dragging : ''}
-    ${maximized !== MaximizedValues.NONE ? styles.maximized : ''}
-    ${maximized === MaximizedValues.FULL ? styles.maximizedFull : ''}
-    ${maximized === MaximizedValues.LEFT ? styles.maximizedLeft : ''}
-    ${maximized === MaximizedValues.RIGHT ? styles.maximizedRight : ''}
+    ${config.maximized !== MaximizedValues.NONE ? styles.maximized : ''}
+    ${config.maximized === MaximizedValues.FULL ? styles.maximizedFull : ''}
+    ${config.maximized === MaximizedValues.LEFT ? styles.maximizedLeft : ''}
+    ${config.maximized === MaximizedValues.RIGHT ? styles.maximizedRight : ''}
   `
   const dialogStyle = {
     display: config.minimized ? 'none' : '',
@@ -212,13 +195,13 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
             {children}
           </div>
           <div className={styles.footer}>
-            {config.resizable && !maximized && 
+            {config.resizable && !config.maximized && 
               <div className={styles.resizer} onMouseDown={handleResize}></div>
             }
           </div>
         </div>
       </DraggableCore>
-      {!maximized && dragging &&
+      {!config.maximized && dragging &&
         <div 
           className={`
             ${styles.maximizeOverlay} 
@@ -228,19 +211,7 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
             ${dragToMaximize === MaximizedValues.RIGHT ? styles.maximizeOverlayRight : ''}`} 
           style={{zIndex: config.zIndex + 1}}></div>
       }
-      {!config.minimized && config.contextMenu && 
-        <ContextMenu 
-          {...config.contextMenu} 
-          zIndex = {config.zIndex * 10 + 1}>
-          <>
-            <div>{`Id: ${id}`}</div>
-            <div>{`Title: ${title}`}</div>
-            <div onClick={toggleMinimize}>Minimize</div>
-            { config.resizable && <div onClick={toggleMaximize}>Maximize</div> }
-            <div onClick={close}>Close</div>
-          </>
-        </ContextMenu>
-      }
+      <DialogContextMenu id={id} config={config} title={title} />
     </>
   )
 }

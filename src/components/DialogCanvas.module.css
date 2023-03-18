@@ -25,7 +25,7 @@
   overflow-y: hidden;
   height: 100%;
 }
-.dialogsFooter .dialogsFooterBar > div {
+.dialogsFooter .dialogsFooterBar > .tab {
   min-width: 40px;
   max-width: 200px;
   height: 100%;
@@ -42,14 +42,13 @@
   align-items: center;
   transition: background-color 0.1s ease-in-out;
 }
-.dialogsFooter .dialogsFooterBar > div:hover {
+.dialogsFooter .dialogsFooterBar > .tab:hover {
   background-color: gold;
 }
-.dialogsFooter .dialogsFooterBar > .focused {
+.dialogsFooter .dialogsFooterBar > .tab.focused {
   background-color: coral !important;
-  font-weight: bold;
 }
-.dialogsFooter .dialogsFooterBar > .minimized {
+.dialogsFooter .dialogsFooterBar > .tab.minimized {
   background-color: white !important;
   opacity: 0.5;
 }

@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { contextMenu, dialogExists, getMaxZIndex, hideContextMenu, toggleMinimize, toTop, toTopPrevious } from './services'
-import { DialogsStateType } from './types'
+import { contextMenu, dialogExists, getMaxZIndex, hideContextMenu, toggleMaximize, toggleMinimize, toTop, toTopPrevious } from './services'
+import { DialogsStateType, MaximizedValues } from './types'
 
 const initialState: DialogsStateType = {
   dialogs: [],
@@ -26,6 +26,7 @@ const dialogsSlice = createSlice({
         config: {
           focused: true,
           minimized: false,
+          maximized: MaximizedValues.NONE,
           width: action.payload.config.width,
           height: action.payload.config.height,
           parent: action.payload.config.parent,
@@ -63,9 +64,15 @@ const dialogsSlice = createSlice({
     toggleMinimize: (state: DialogsStateType, action) => {
       toggleMinimize(state.dialogs, action.payload.id)
     },
+    toggleMaximize: (state: DialogsStateType, action) => {
+      toggleMaximize(state.dialogs, action.payload.id, action.payload.maximized)
+    },
     showContextMenu: (state: DialogsStateType, action) => {
+      const e = action.payload.event as React.MouseEvent<HTMLDivElement, MouseEvent>
+      e.preventDefault()
+      e.stopPropagation()
       hideContextMenu(state.dialogs)
-      contextMenu(state.dialogs, action.payload.id, action.payload.x, action.payload.y)
+      contextMenu(state.dialogs, action.payload.id, e.clientX, e.clientY)
     },
     hideContextMenu: (state: DialogsStateType, ) => {
       hideContextMenu(state.dialogs)
