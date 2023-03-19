@@ -42,18 +42,16 @@ export default function DialogCanvas() {
 
   return (
     <div className={styles.canvas} onClick={handleOnClick} onContextMenu={handleOnContextMenu}>
-      <>
-        {dialogs.map((dialog :DialogType) => (
-          <Dialog
-            key={`dialog${dialog.id}`}
-            title={dialog.title}
-            id={dialog.id}
-            config={dialog.config}
-          >
-            {dialog.children}
-          </Dialog>
-        ))}
-      </>
+      {dialogs.map((dialog :DialogType) => (
+        <Dialog
+          key={`dialog${dialog.id}`}
+          title={dialog.title}
+          id={dialog.id}
+          config={dialog.config}
+        >
+          {dialog.children}
+        </Dialog>
+      ))}
       <div className={styles.footer}>
         <Menu />
         <div className={styles.bar}>
