@@ -12,7 +12,19 @@ export const getMaxZIndex = (dialogs: DialogType[]) => {
   if (!dialogs || dialogs.length === 0) {
     return 0
   }
-  return Math.max(... dialogs.map(dialog => dialog.config.zIndex))
+  let maxIndex = Math.max(... dialogs.map(dialog => dialog.config.zIndex))
+  if (maxIndex === -Infinity) {
+    return 0
+  }
+  if (maxIndex > 100) {
+    maxIndex = dialogs.length
+    const copyDialogs = dialogs.slice() // Shallow copy
+    copyDialogs.sort((a, b) => a.config.zIndex - b.config.zIndex)
+      .forEach((dialog, index) => {
+        dialog.config.zIndex = index
+      })
+  }
+  return maxIndex
 }
 
 export const toTop = (dialogs: DialogType[], id: string) => {
@@ -48,11 +60,9 @@ export const toggleMinimize = (dialogs: DialogType[], id: string) => {
     return
   }
   if (dialog.config.minimized) {
-    console.log('dialog already minimized', id)
     toTop(dialogs, id)
     return
   }
-  console.log('minimizing dialog', id)
   dialogs.map(dialog => {
     if (dialog.id === id) {
       dialog.config.zIndex = 0

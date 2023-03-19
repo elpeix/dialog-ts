@@ -53,6 +53,9 @@ const dialogsSlice = createSlice({
     close: (state: DialogsStateType, action) => {
       state.dialogs = state.dialogs.filter(dialog => dialog.id !== action.payload.id)
       toTopPrevious(state.dialogs)
+      if (state.dialogs.length === 0) {
+        state.position = initialState.position
+      }
     },
     closeAll: (state: DialogsStateType, ) => {
       state.dialogs = initialState.dialogs
