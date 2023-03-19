@@ -1,0 +1,58 @@
+.canvas {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--d-c-background);
+}
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  background: var(--d-f-background);
+  backdrop-filter: var(--d-f-filter);
+  height: var(--d-f-height);
+  z-index: var(--d-f-z-index);
+}
+.bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--d-fb-space);
+  padding: var(--d-fb-space);
+  overflow-x: auto;
+  overflow-y: hidden;
+  height: 100%;
+  width: 100%;
+}
+.tab {
+  align-items: center;
+  background-color: var(--d-fbt-color);
+  border-radius: var(--d-fbt-radius);
+  cursor: default;
+  height: 100%;
+  display: flex;
+  max-width: 15rem;
+  min-width: 2rem;
+  overflow: hidden;
+  padding: 0 0.3rem;
+  flex-grow: 1;
+  transition: background-color 0.1s ease-in-out;
+}
+.tab > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tab:hover {
+  background-color: var(--d-fbt-hover);
+}
+.tab.focused {
+  background-color: var(--d-fbt-focused) !important;
+}
+.tab.minimized {
+  background-color: var(--d-fbt-minimized) !important;
+  opacity: 0.6;
+}

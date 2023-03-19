@@ -2,9 +2,10 @@ import React, { useLayoutEffect, useRef, useState } from 'react'
 import styles from './ContextMenu.module.css'
 
 export default function ContextMenu(
-  {x, y, zIndex, children}: {
+  {x, y, zIndex, className, children}: {
     x: number,
     y: number,
+    className?: string,
     zIndex: number,
     children: React.ReactNode
   }) {
@@ -24,11 +25,11 @@ export default function ContextMenu(
   return (
     <div 
       ref={ref}
-      className={styles.contextMenu}
+      className={`${className} ${styles.contextMenu}`}
       style={{
         top: `${y + dimensions.height > window.innerHeight ? y - dimensions.height : y}px`,
         left: `${x + dimensions.width > window.innerWidth ? x - dimensions.width : x}px`,
-        zIndex: zIndex * 10 + 2
+        zIndex: zIndex * 1000
       }}>
       {children}
     </div>

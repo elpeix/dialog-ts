@@ -2,7 +2,7 @@ import React from 'react'
 import { useDispatch } from 'react-redux'
 import { dialogActions } from '../features/dialogs/dialogSlice'
 import { DialogBasicType, MaximizedValues } from '../features/dialogs/types'
-import ContextMenu from './ContextMenu'
+import ContextMenu from './contextMenu/ContextMenu'
 
 export default function DialogContextMenu({id, config}: DialogBasicType) {
 
@@ -14,6 +14,10 @@ export default function DialogContextMenu({id, config}: DialogBasicType) {
 
   const toggleMaximize = () => {
     dispatch(dialogActions.toggleMaximize({ id, maximized: MaximizedValues.FULL }))
+  }
+
+  const close = () => {
+    dispatch(dialogActions.close({ id }))
   }
 
   return (

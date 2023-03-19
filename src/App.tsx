@@ -1,13 +1,8 @@
 import React from 'react'
-import './App.css'
-import DialogCanvas from './components/DialogCanvas'
+import DialogCanvas from './components/dialogCanvas/DialogCanvas'
 
 function App() {
-  return (
-    <div className="App">
-      <DialogCanvas />
-    </div>
-  )
+  return <DialogCanvas />
 }
 
 export default App

@@ -71,7 +71,7 @@ export default function Confirm( { confirmText, onCancel, onConfirm }: ConfirmTy
       <dialog ref={confirmRef}>
         <p>{confirmText}</p>
         <form method='dialog'>
-          <button onClick={handleConfirm}>Yes</button>
+          <button type="submit" onClick={handleConfirm}>Yes</button>
           <button onClick={handleCancel}>No</button>
         </form>
       </dialog>
