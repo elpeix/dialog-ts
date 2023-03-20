@@ -12,8 +12,12 @@ export default function DialogContextMenu({id, config}: DialogBasicType) {
     dispatch(dialogActions.toggleMinimize({ id }))
   }
 
-  const toggleMaximize = () => {
-    dispatch(dialogActions.toggleMaximize({ id, maximized: MaximizedValues.FULL }))
+  const maximize = () => {
+    dispatch(dialogActions.setMaximize({ id, maximized: MaximizedValues.FULL }))
+  }
+
+  const restoreMaximize = () => {
+    dispatch(dialogActions.setMaximize({ id, maximized: MaximizedValues.NONE }))
   }
 
   const close = () => {
@@ -31,9 +35,13 @@ export default function DialogContextMenu({id, config}: DialogBasicType) {
               {config.minimized ? 'Show' : 'Minimize'}
             </div>
             { !config.minimized && config.resizable && (
-              <div onClick={toggleMaximize}>
-                {config.maximized === MaximizedValues.FULL ? 'Restore' : 'Maximize'}
-              </div>
+              <>
+                {config.maximized !== MaximizedValues.NONE ? (
+                  <div onClick={restoreMaximize}>Restore</div>
+                ) : (
+                  <div onClick={maximize}>Maximize</div>
+                )}
+              </>
             )}
             <div onClick={close}>Close</div>
           </>

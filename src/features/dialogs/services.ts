@@ -53,10 +53,35 @@ export const toTopPrevious = (dialogs: DialogType[]) => {
   }
 }
 
+export const toNext = (dialogs: DialogType[]) => {
+  if (dialogs.length <= 1) {
+    return
+  }
+  const index = dialogs.findIndex(dialog => dialog.config.focused)
+  if (index >= 0) {
+    const nextDialog = dialogs.at(index + 1) || dialogs.at(0)
+    if (nextDialog) {
+      toTop(dialogs, nextDialog.id)
+    }
+  }
+}
+
+export const toPrevious = (dialogs: DialogType[]) => {
+  if (dialogs.length <= 1) {
+    return
+  }
+  const index = dialogs.findIndex(dialog => dialog.config.focused)
+  if (index >= 0) {
+    const previousDialog = dialogs.at(index - 1) || dialogs.at(dialogs.length - 1)
+    if (previousDialog) {
+      toTop(dialogs, previousDialog.id)
+    }
+  }
+}
+
 export const toggleMinimize = (dialogs: DialogType[], id: string) => {
   const dialog = getDialog(dialogs, id)
   if (!dialog) {
-    console.log('dialog not found', id)
     return
   }
   if (dialog.config.minimized) {
@@ -74,17 +99,28 @@ export const toggleMinimize = (dialogs: DialogType[], id: string) => {
   toTopPrevious(dialogs)
 }
 
-export const toggleMaximize = (dialogs: DialogType[], id: string, maximized: number) => {
+export const toggleMaximize = (dialogs: DialogType[], id: string) => {
   const dialog = getDialog(dialogs, id)
   if (!dialog || dialog.config.minimized || !dialog.config.resizable) {
     return
   }
   toTop(dialogs, id)
-  if (dialog.config.maximized === maximized) {
+  if (dialog.config.maximized === MaximizedValues.FULL) {
     dialog.config.maximized = MaximizedValues.NONE
     return
   }
-  dialog.config.maximized = maximized
+  dialog.config.maximized = MaximizedValues.FULL
+}
+
+export const setMaximize = (dialogs: DialogType[], id: string, maximized: number) => {
+  const dialog = getDialog(dialogs, id)
+  if (!dialog || dialog.config.minimized || !dialog.config.resizable) {
+    return
+  }
+  toTop(dialogs, id)
+  if (dialog.config.maximized !== maximized) {
+    dialog.config.maximized = maximized
+  }
 }
 
 export const contextMenu = (dialogs: DialogType[], id: string, x: number, y: number) => {
@@ -92,11 +128,9 @@ export const contextMenu = (dialogs: DialogType[], id: string, x: number, y: num
   if (!dialog) {
     return
   }
-  console.log('aaa', dialog.config.minimized)
   if (!dialog.config.minimized) {
     toTop(dialogs, id)
   }
-  console.log('bbb', dialog.config.minimized)
   dialog.config.contextMenu = {
     x,
     y,

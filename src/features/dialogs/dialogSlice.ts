@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { contextMenu, dialogExists, getMaxZIndex, hideContextMenu, toggleMaximize, toggleMinimize, toTop, toTopPrevious } from './services'
+import { contextMenu, dialogExists, getMaxZIndex, hideContextMenu, setMaximize, toggleMaximize, toggleMinimize, toNext, toPrevious, toTop, toTopPrevious } from './services'
 import { DialogsStateType, MaximizedValues } from './types'
 
 const initialState: DialogsStateType = {
@@ -62,15 +62,12 @@ const dialogsSlice = createSlice({
       state.dialogs = initialState.dialogs
       state.position = initialState.position
     },
-    toTop: (state: DialogsStateType, action) => {
-      toTop(state.dialogs, action.payload.id)
-    },
-    toggleMinimize: (state: DialogsStateType, action) => {
-      toggleMinimize(state.dialogs, action.payload.id)
-    },
-    toggleMaximize: (state: DialogsStateType, action) => {
-      toggleMaximize(state.dialogs, action.payload.id, action.payload.maximized)
-    },
+    toTop: (state: DialogsStateType, action) => toTop(state.dialogs, action.payload.id),
+    toPrevious: (state: DialogsStateType, ) => toPrevious(state.dialogs),
+    toNext: (state: DialogsStateType, ) => toNext(state.dialogs),
+    toggleMinimize: (state: DialogsStateType, action) => toggleMinimize(state.dialogs, action.payload.id),
+    toggleMaximize: (state: DialogsStateType, action) => toggleMaximize(state.dialogs, action.payload.id),
+    setMaximize: (state: DialogsStateType, action) => setMaximize(state.dialogs, action.payload.id, action.payload.maximized),
     showContextMenu: (state: DialogsStateType, action) => {
       const e = action.payload.event as React.MouseEvent<HTMLDivElement, MouseEvent>
       e.preventDefault()
@@ -78,12 +75,8 @@ const dialogsSlice = createSlice({
       hideContextMenu(state.dialogs)
       contextMenu(state.dialogs, action.payload.id, e.clientX, e.clientY)
     },
-    hideContextMenu: (state: DialogsStateType, ) => {
-      hideContextMenu(state.dialogs)
-    },
-    clearFocus: (state: DialogsStateType, ) => {
-      state.dialogs.forEach(dialog => dialog.config.focused = false)
-    }
+    hideContextMenu: (state: DialogsStateType, ) => hideContextMenu(state.dialogs),
+    clearFocus: (state: DialogsStateType, ) => state.dialogs.forEach(dialog => dialog.config.focused = false)
   }
 })
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { dialogActions, dialogsState } from '../../features/dialogs/dialogSlice'
-import { DialogsStateType, DialogType } from '../../features/dialogs/types'
+import { DialogsStateType, DialogType, MaximizedValues } from '../../features/dialogs/types'
 import styles from './DialogCanvas.module.css'
 import Menu from '../Menu'
 import Dialog from '../dialog/Dialog'
@@ -14,15 +14,15 @@ export default function DialogCanvas() {
   const dispatch = useDispatch()
   const [confirm, setConfirm] = useState<JSX.Element | null>(null)
 
-  const handleOnClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const clickHandler = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     if (e.target === e.currentTarget) {
       dispatch(dialogActions.clearFocus())
     }
     dispatch(dialogActions.hideContextMenu())
   }
 
-  const handleOnContextMenu = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    e.preventDefault()
+  const contextMenuHandler = () => {
+    // e.preventDefault() // Comment out to show general context menu
     dispatch(dialogActions.hideContextMenu())
     // Show general context menu?
   }
@@ -40,8 +40,50 @@ export default function DialogCanvas() {
     }
   }
 
+  const getFocused = () => dialogs.find((dialog: DialogType) => dialog.config.focused)
+
+  const keyDownHandler = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Escape') {
+      dispatch(dialogActions.hideContextMenu())
+    }
+    if (e.key.toLowerCase() === 'q' && e.altKey && e.shiftKey) {
+      closeAll()
+    }
+    if (e.key === 'ArrowRight' && e.altKey) {
+      dispatch(dialogActions.toNext())
+    }
+    if (e.key === 'ArrowLeft' && e.altKey) {
+      dispatch(dialogActions.toPrevious())
+    }
+    const focused = getFocused()
+    if (!focused) {
+      return
+    }
+    if (e.key.toLocaleLowerCase() === 'w' && e.altKey && e.shiftKey) {
+      dispatch(dialogActions.close({ id: focused.id }))
+    }
+    if (e.key === 'ArrowUp' && e.altKey && e.shiftKey) {
+      dispatch(dialogActions.setMaximize({id: focused.id, maximized: MaximizedValues.FULL}))
+    }
+    if (e.key === 'ArrowLeft' && e.altKey && e.shiftKey) {
+      dispatch(dialogActions.setMaximize({id: focused.id, maximized: MaximizedValues.LEFT}))
+    }
+    if (e.key === 'ArrowRight' && e.altKey && e.shiftKey) {
+      dispatch(dialogActions.setMaximize({id: focused.id, maximized: MaximizedValues.RIGHT}))
+    }
+    if (e.key === 'ArrowDown' && e.altKey && e.shiftKey) {
+      dispatch(dialogActions.setMaximize({id: focused.id, maximized: MaximizedValues.NONE}))
+    }
+  }
+
   return (
-    <div className={styles.canvas} onClick={handleOnClick} onContextMenu={handleOnContextMenu}>
+    <div 
+      className={styles.canvas}
+      onClick={clickHandler}
+      onContextMenu={contextMenuHandler}
+      onKeyDown={keyDownHandler}
+      tabIndex={0}
+    >
       {dialogs.map((dialog :DialogType) => (
         <Dialog
           key={`dialog${dialog.id}`}

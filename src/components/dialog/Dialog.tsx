@@ -29,7 +29,7 @@ export default function Dialog({ id, title, icon, config, children }: DialogType
   }
 
   const toggleMaximize = () => {
-    dispatch(dialogActions.toggleMaximize({id: id, maximized: MaximizedValues.FULL}))
+    dispatch(dialogActions.toggleMaximize({ id }))
   }
 
   const bounds = {
@@ -79,7 +79,7 @@ export default function Dialog({ id, title, icon, config, children }: DialogType
 
     if (config.maximized !== MaximizedValues.NONE) {
       if (config.top + y > 20) {
-        dispatch(dialogActions.toggleMaximize({id: id, maximized: MaximizedValues.NONE}))
+        dispatch(dialogActions.setMaximize({id: id, maximized: MaximizedValues.NONE}))
       }
     } else if (config.resizable) {
       if (data.y < 0) {
@@ -98,7 +98,7 @@ export default function Dialog({ id, title, icon, config, children }: DialogType
   const stopHandler: DraggableEventHandler = () => {
     if (!dragging) return
     if (dragged) {
-      dispatch(dialogActions.toggleMaximize({id: id, maximized: dragToMaximize}))
+      dispatch(dialogActions.setMaximize({id: id, maximized: dragToMaximize}))
       setDragToMaximize(MaximizedValues.NONE)
     }
     setDragging(false)
