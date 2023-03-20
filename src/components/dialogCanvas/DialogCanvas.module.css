@@ -37,9 +37,20 @@
   max-width: 15rem;
   min-width: 2rem;
   overflow: hidden;
-  padding: 0 0.3rem;
+  padding: 0.3rem;
   flex-grow: 1;
+  gap: var(--d-fb-space);
   transition: background-color 0.1s ease-in-out;
+}
+.tabIcon {
+  width: var(--d-fbti-size);
+  height: var(--d-fbti-size);
+  aspect-ratio: 1/1;
+  border-radius: var(--d-fbt-radius);
+  background-color: rgba(0, 0, 0, 0.2);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 .tab > span {
   overflow: hidden;

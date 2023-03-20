@@ -6,7 +6,7 @@ import { dialogActions } from '../../features/dialogs/dialogSlice'
 import { DialogType, MaximizedValues } from '../../features/dialogs/types'
 import DialogContextMenu from '../DialogContextMenu'
 
-export default function Dialog({ id, title, config, children }: DialogType ) {
+export default function Dialog({ id, title, icon, config, children }: DialogType ) {
 
   const dispatch = useDispatch()
 
@@ -183,7 +183,9 @@ export default function Dialog({ id, title, config, children }: DialogType ) {
           onContextMenu={toTop}
         >
           <header className={`dialog-drag ${styles.header}`} onDoubleClick={toggleMaximize}>
-            <div className={styles.header_icon} onContextMenu={contextMenuHandler}></div>
+            <div className={styles.header_icon} onContextMenu={contextMenuHandler}>
+              {icon && <img src={icon} />}
+            </div>
             <div className={styles.header_title}>{title}</div>
             <div className={`dialog-no-drag ${styles.header_action} ${styles.header_minimize}`} onClick={toggleMinimize} />
             { config.resizable && config.maximized === MaximizedValues.NONE &&

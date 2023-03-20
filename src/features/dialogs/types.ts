@@ -1,6 +1,7 @@
 export type DialogBasicType = {
   id: string,
   title?: string,
+  icon?: string,
   config: DialogConfigType
 }
 

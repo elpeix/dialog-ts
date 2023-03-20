@@ -23,6 +23,7 @@ const dialogsSlice = createSlice({
       state.dialogs.push({
         id: action.payload.id,
         title: action.payload.title,
+        icon: action.payload.icon,
         config: {
           focused: true,
           minimized: false,

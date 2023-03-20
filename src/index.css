@@ -19,6 +19,7 @@
   --d-fbt-focused: coral;
   --d-fbt-minimized: var(--disabled-color);
   --d-fbt-radius: var(--d-radius);
+  --d-fbti-size: 1.5rem;
 
   --d-d-background: #f4f4f4;
   --d-d-color: var(--color);
@@ -47,7 +48,7 @@
   --d-dh-maximize: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" d="M 6,18 V 6 H 18 V 18 H 6"/></svg>');
   --d-dh-maximize-color: none;
   --d-dh-maximize-color-hover: goldenrod;
-  --d-dh-restore: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" d="M 6,18 V 6 H 18 V 18 H 6 M 14,14 H 18 V 10" /></svg>');
+  --d-dh-restore: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" d="m 6,18 v -7 h 7 v 7 H 6" /><rect style="stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:1.5, 1.5;stroke-dashoffset:0.75;" width="12" height="12" x="6" y="6" /></svg>');
   --d-dh-restore-color: none;
   --d-dh-restore-color-hover: goldenrod;
   --d-dh-minimize: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white"><path stroke-linecap="round" stroke-linejoin="round" d="M 6,18 H 18" /></svg>');

@@ -2,6 +2,7 @@ import React from 'react'
 import { useDispatch } from 'react-redux'
 import { dialogActions } from '../features/dialogs/dialogSlice'
 import { User } from './User'
+import userIcon from '../assets/user.svg'
 
 export default function Menu() {
 
@@ -29,6 +30,7 @@ export default function Menu() {
     dispatch(dialogActions.create({
       id: 'user',
       title: 'User',
+      icon: userIcon,
       config: {
         width: 400,
         height: 500

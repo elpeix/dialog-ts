@@ -46,6 +46,7 @@ export default function DialogCanvas() {
         <Dialog
           key={`dialog${dialog.id}`}
           title={dialog.title}
+          icon={dialog.icon}
           id={dialog.id}
           config={dialog.config}
         >
@@ -66,7 +67,10 @@ export default function DialogCanvas() {
                 title={dialog.title}
                 onClick={() => dispatch(dialogActions.toTop({id: dialog.id}))}
                 onContextMenu={(e) => dispatch(dialogActions.showContextMenu({id: dialog.id, event: e}))}
-              >
+              > 
+                <div className={styles.tabIcon}>
+                  {dialog.icon && <img src={dialog.icon} alt={dialog.title} /> }
+                </div>
                 <span>{dialog.title}</span>
               </div>
               <DialogContextMenu id={dialog.id} config={dialog.config} />
