@@ -53,6 +53,49 @@ export const toTopPrevious = (dialogs: DialogType[]) => {
   }
 }
 
+export const toNextVisible = (dialogs: DialogType[]) => {
+  if (dialogs.length <= 1) {
+    return
+  }
+  const index = dialogs.findIndex(dialog => dialog.config.focused)
+  if (index >= 0) {
+    Array
+    for (let i = index + 1; i < dialogs.length; i++) {
+      if (!dialogs[i].config.minimized) {
+        toTop(dialogs, dialogs[i].id)
+        return
+      }
+    }
+    for (let i = 0; i < index; i++) {
+      if (!dialogs[i].config.minimized) {
+        toTop(dialogs, dialogs[i].id)
+        return
+      }
+    }
+  }
+}
+
+export const toPreviousVisible = (dialogs: DialogType[]) => {
+  if (dialogs.length <= 1) {
+    return
+  }
+  const index = dialogs.findIndex(dialog => dialog.config.focused)
+  if (index >= 0) {
+    for (let i = index - 1; i >= 0; i--) {
+      if (!dialogs[i].config.minimized) {
+        toTop(dialogs, dialogs[i].id)
+        return
+      }
+    }
+    for (let i = dialogs.length - 1; i > index; i--) {
+      if (!dialogs[i].config.minimized) {
+        toTop(dialogs, dialogs[i].id)
+        return
+      }
+    }
+  }
+}
+
 export const toNext = (dialogs: DialogType[]) => {
   if (dialogs.length <= 1) {
     return

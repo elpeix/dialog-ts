@@ -1,5 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { contextMenu, dialogExists, getMaxZIndex, hideContextMenu, setMaximize, toggleMaximize, toggleMinimize, toNext, toPrevious, toTop, toTopPrevious } from './services'
+import { 
+  contextMenu, dialogExists, getMaxZIndex, hideContextMenu, setMaximize,
+  toggleMaximize, toggleMinimize, toNext, toPrevious, toNextVisible, toPreviousVisible,
+  toTop, toTopPrevious 
+} from './services'
 import { DialogsStateType, MaximizedValues } from './types'
 
 const initialState: DialogsStateType = {
@@ -63,6 +67,8 @@ const dialogsSlice = createSlice({
       state.position = initialState.position
     },
     toTop: (state: DialogsStateType, action) => toTop(state.dialogs, action.payload.id),
+    toPreviousVisible: (state: DialogsStateType, ) => toPreviousVisible(state.dialogs),
+    toNextVisible: (state: DialogsStateType, ) => toNextVisible(state.dialogs),
     toPrevious: (state: DialogsStateType, ) => toPrevious(state.dialogs),
     toNext: (state: DialogsStateType, ) => toNext(state.dialogs),
     toggleMinimize: (state: DialogsStateType, action) => toggleMinimize(state.dialogs, action.payload.id),

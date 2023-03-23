@@ -50,10 +50,10 @@ export default function DialogCanvas() {
       closeAll()
     }
     if (e.key === 'ArrowRight' && e.altKey) {
-      dispatch(dialogActions.toNext())
+      dispatch(dialogActions.toNextVisible())
     }
     if (e.key === 'ArrowLeft' && e.altKey) {
-      dispatch(dialogActions.toPrevious())
+      dispatch(dialogActions.toPreviousVisible())
     }
     const focused = getFocused()
     if (!focused) {
@@ -73,6 +73,13 @@ export default function DialogCanvas() {
     }
     if (e.key === 'ArrowDown' && e.altKey && e.shiftKey) {
       dispatch(dialogActions.setMaximize({id: focused.id, maximized: MaximizedValues.NONE}))
+    }
+    if (e.key === 'Tab' && e.altKey) {
+      if (e.shiftKey) {
+        dispatch(dialogActions.toPrevious())
+      } else {
+        dispatch(dialogActions.toNext())
+      }
     }
   }
 
