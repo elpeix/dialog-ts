@@ -33,7 +33,7 @@ export const toTop = (dialogs: DialogType[], id: string) => {
     if (dialog.id === id) {
       dialog.config.focused = true
       dialog.config.minimized = false
-      if (dialog.config.zIndex !== maxZIndex) {
+      if (dialog.config.zIndex !== maxZIndex || maxZIndex === 0) {
         dialog.config.zIndex = maxZIndex + 1
       }
     } else {
@@ -58,8 +58,11 @@ export const toNextVisible = (dialogs: DialogType[]) => {
     return
   }
   const index = dialogs.findIndex(dialog => dialog.config.focused)
+  if (index < 0) {
+    focusTopVisible(dialogs, index)
+    return
+  }
   if (index >= 0) {
-    Array
     for (let i = index + 1; i < dialogs.length; i++) {
       if (!dialogs[i].config.minimized) {
         toTop(dialogs, dialogs[i].id)
@@ -80,6 +83,10 @@ export const toPreviousVisible = (dialogs: DialogType[]) => {
     return
   }
   const index = dialogs.findIndex(dialog => dialog.config.focused)
+  if (index < 0) {
+    focusTopVisible(dialogs, index)
+    return
+  }
   if (index >= 0) {
     for (let i = index - 1; i >= 0; i--) {
       if (!dialogs[i].config.minimized) {
@@ -100,12 +107,19 @@ export const toNext = (dialogs: DialogType[]) => {
   if (dialogs.length <= 1) {
     return
   }
-  const index = dialogs.findIndex(dialog => dialog.config.focused)
-  if (index >= 0) {
-    const nextDialog = dialogs.at(index + 1) || dialogs.at(0)
-    if (nextDialog) {
-      toTop(dialogs, nextDialog.id)
+  let index = dialogs.findIndex(dialog => dialog.config.focused)
+  if (index < 0) {
+    const maxZIndex = getMaxZIndex(dialogs)
+    index = dialogs.findIndex(dialog => dialog.config.zIndex === maxZIndex)
+    if (index >= 0) {
+      toTop(dialogs, dialogs[index].id)
+      return
     }
+    index = 0
+  }
+  const nextDialog = dialogs.at(index + 1) || dialogs.at(0)
+  if (nextDialog) {
+    toTop(dialogs, nextDialog.id)
   }
 }
 
@@ -113,12 +127,19 @@ export const toPrevious = (dialogs: DialogType[]) => {
   if (dialogs.length <= 1) {
     return
   }
-  const index = dialogs.findIndex(dialog => dialog.config.focused)
-  if (index >= 0) {
-    const previousDialog = dialogs.at(index - 1) || dialogs.at(dialogs.length - 1)
-    if (previousDialog) {
-      toTop(dialogs, previousDialog.id)
+  let index = dialogs.findIndex(dialog => dialog.config.focused)
+  if (index < 0) {
+    const maxZIndex = getMaxZIndex(dialogs)
+    index = dialogs.findIndex(dialog => dialog.config.zIndex === maxZIndex)
+    if (index >= 0) {
+      toTop(dialogs, dialogs[index].id)
+      return
     }
+    index = dialogs.length - 1
+  }
+  const previousDialog = dialogs.at(index - 1) || dialogs.at(dialogs.length - 1)
+  if (previousDialog) {
+    toTop(dialogs, previousDialog.id)
   }
 }
 
@@ -186,3 +207,12 @@ export const hideContextMenu = (dialogs: DialogType[]) => {
     dialog.config.contextMenu = undefined
   })
 }
+const focusTopVisible = (dialogs: DialogType[], index: number) => {
+  const visibleDialogs = dialogs.filter(dialog => !dialog.config.minimized)
+  const maxZIndex = getMaxZIndex(visibleDialogs)
+  index = visibleDialogs.findIndex(dialog => dialog.config.zIndex === maxZIndex)
+  if (index >= 0) {
+    toTop(dialogs, dialogs[index].id)
+  }
+}
+

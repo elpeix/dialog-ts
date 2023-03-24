@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { dialogActions, dialogsState } from '../../features/dialogs/dialogSlice'
 import { DialogsStateType, DialogType, MaximizedValues } from '../../features/dialogs/types'
@@ -40,7 +40,7 @@ export default function DialogCanvas() {
     }
   }
 
-  const getFocused = () => dialogs.find((dialog: DialogType) => dialog.config.focused)
+  const getFocused = useCallback(() => dialogs.find((dialog: DialogType) => dialog.config.focused), [dialogs])
 
   const keyDownHandler = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Escape') {
@@ -50,12 +50,25 @@ export default function DialogCanvas() {
       closeAll()
     }
     if (e.key === 'ArrowRight' && e.altKey) {
+      e.preventDefault()
       dispatch(dialogActions.toNextVisible())
     }
     if (e.key === 'ArrowLeft' && e.altKey) {
+      e.preventDefault()
       dispatch(dialogActions.toPreviousVisible())
     }
+
     const focused = getFocused()
+    if (e.key === 'Tab' && e.altKey) {
+      if (dialogs.length === 0) {
+        return
+      }
+      if (e.shiftKey) {
+        dispatch(dialogActions.toPrevious())
+      } else {
+        dispatch(dialogActions.toNext())
+      }
+    }
     if (!focused) {
       return
     }
@@ -73,13 +86,6 @@ export default function DialogCanvas() {
     }
     if (e.key === 'ArrowDown' && e.altKey && e.shiftKey) {
       dispatch(dialogActions.setMaximize({id: focused.id, maximized: MaximizedValues.NONE}))
-    }
-    if (e.key === 'Tab' && e.altKey) {
-      if (e.shiftKey) {
-        dispatch(dialogActions.toPrevious())
-      } else {
-        dispatch(dialogActions.toNext())
-      }
     }
   }
 
