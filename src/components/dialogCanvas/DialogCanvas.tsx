@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { dialogActions, dialogsState } from '../../features/dialogs/dialogSlice'
+import { dialogActions, dialogsState, tryToClose } from '../../features/dialogs/dialogSlice'
 import { DialogsStateType, DialogType, MaximizedValues, RootState } from '../../features/dialogs/types'
 import styles from './DialogCanvas.module.css'
 import Menu from '../Menu'
@@ -10,7 +10,7 @@ import Confirm from '../confirm/Confirm'
 
 export default function DialogCanvas() {
 
-  const { dialogs } = useSelector<RootState>(dialogsState) as DialogsStateType
+  const { dialogs, confirmDialog } = useSelector<RootState>(dialogsState) as DialogsStateType
   const dispatch = useDispatch()
   const [confirm, setConfirm] = useState<JSX.Element | null>(null)
 
@@ -73,7 +73,7 @@ export default function DialogCanvas() {
       return
     }
     if (e.key.toLocaleLowerCase() === 'w' && e.altKey && e.shiftKey) {
-      dispatch(dialogActions.close({ id: focused.id }))
+      dispatch(tryToClose({ id: focused.id }))
     }
     if (e.key === 'ArrowUp' && e.altKey && e.shiftKey) {
       dispatch(dialogActions.setMaximize({id: focused.id, maximized: MaximizedValues.FULL}))
@@ -88,6 +88,23 @@ export default function DialogCanvas() {
       dispatch(dialogActions.setMaximize({id: focused.id, maximized: MaximizedValues.NONE}))
     }
   }
+
+  useEffect(() => {
+    if (confirmDialog && confirmDialog.show && confirmDialog.id) {
+      setConfirm(<Confirm
+        confirmText={confirmDialog.title}
+        onCancel={() => {
+          dispatch(dialogActions.hideCloseConfirm())
+          setConfirm(null)
+        }}
+        onConfirm={() => {
+          dispatch(dialogActions.hideCloseConfirm())
+          dispatch(dialogActions.forceClose({ id: confirmDialog.id }))
+          setConfirm(null)
+        }}
+      />)
+    }
+  }, [confirmDialog, dispatch])
 
   return (
     <div 

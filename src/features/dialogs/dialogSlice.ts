@@ -1,18 +1,47 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { 
   contextMenu, dialogExists, getMaxZIndex, hideContextMenu, setMaximize,
   toggleMaximize, toggleMinimize, toNext, toPrevious, toNextVisible, toPreviousVisible,
-  toTop, toTopPrevious, getDialog 
+  toTop, getDialog, toTopPrevious 
 } from './services'
 import { DialogsStateType, MaximizedValues, RootState } from './types'
 
 const initialState: DialogsStateType = {
   dialogs: [],
+  confirmDialog: {
+    show: false,
+    title: '',
+    message: '',
+    id: ''
+  },
   position: {
     left: 20,
     top: 20
   }
 }
+
+const forceCloseDialog = (state: DialogsStateType, id: string) => {
+  state.dialogs = state.dialogs.filter(dialog => dialog.id !== id)
+  toTopPrevious(state.dialogs)
+  if (state.dialogs.length === 0) {
+    state.position = initialState.position
+  }
+  state.confirmDialog = initialState.confirmDialog
+}
+
+
+export const tryToClose = createAsyncThunk(
+  'dialogsState/tryToClose',
+  ({ id }: {id: string}, thunkApi) => {
+    const state = thunkApi.getState() as RootState
+    const dialogState = state.dialogsState as DialogsStateType
+    const dialog = getDialog(dialogState.dialogs, id)
+    if (!dialog) {
+      return thunkApi.rejectWithValue('nops')
+    }
+    return thunkApi.fulfillWithValue({ action: dialog.closePrevented ? 'preventClose' : 'ok' })
+  }
+) as any // eslint-disable-line @typescript-eslint/no-explicit-any
 
 const dialogsSlice = createSlice({
   name: 'dialogState',
@@ -62,18 +91,7 @@ const dialogsSlice = createSlice({
         dialog.closePrevented = action.payload.preventClose
       }
     },
-    close: (state: DialogsStateType, action) => {
-      const dialog = getDialog(state.dialogs, action.payload.id)
-      if (dialog && dialog.closePrevented) {
-        dialog.closePrevented = false
-        return
-      }
-      state.dialogs = state.dialogs.filter(dialog => dialog.id !== action.payload.id)
-      toTopPrevious(state.dialogs)
-      if (state.dialogs.length === 0) {
-        state.position = initialState.position
-      }
-    },
+    forceClose: (state: DialogsStateType, action) => forceCloseDialog(state, action.payload.id),
     closeAll: (state: DialogsStateType, ) => {
       state.dialogs = initialState.dialogs
       state.position = initialState.position
@@ -94,7 +112,27 @@ const dialogsSlice = createSlice({
       contextMenu(state.dialogs, action.payload.id, e.clientX, e.clientY)
     },
     hideContextMenu: (state: DialogsStateType, ) => hideContextMenu(state.dialogs),
-    clearFocus: (state: DialogsStateType, ) => state.dialogs.forEach(dialog => dialog.config.focused = false)
+    clearFocus: (state: DialogsStateType, ) => state.dialogs.forEach(dialog => dialog.config.focused = false),
+    hideCloseConfirm: (state: DialogsStateType, ) => {state.confirmDialog.show = false}
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(tryToClose.fulfilled, (state, action) => {
+        if (action.payload.action === 'ok') {
+          forceCloseDialog(state, action.meta.arg.id)
+          return
+        }
+        state.confirmDialog = {
+          ...state.confirmDialog,
+          show: true,
+          title: 'Close dialog?',
+          id: action.meta.arg.id,
+          message: 'Are you sure you want to close this dialog?',
+        }
+      })
+      .addCase(tryToClose.rejected, (state, action) => {
+        console.log('fetchUserById rejected', action)
+      })
   }
 })
 

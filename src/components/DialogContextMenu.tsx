@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
-import { dialogActions } from '../features/dialogs/dialogSlice'
+import { dialogActions, tryToClose } from '../features/dialogs/dialogSlice'
 import { DialogBasicType, MaximizedValues } from '../features/dialogs/types'
 import ContextMenu from './contextMenu/ContextMenu'
 
@@ -21,7 +21,7 @@ export default function DialogContextMenu({id, config}: DialogBasicType) {
   }
 
   const close = () => {
-    dispatch(dialogActions.close({ id }))
+    dispatch(tryToClose({ id }))
   }
 
   return (

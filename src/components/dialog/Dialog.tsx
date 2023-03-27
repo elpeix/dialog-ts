@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { DraggableCore, DraggableEventHandler } from 'react-draggable'
 import { useDispatch, useSelector } from 'react-redux'
 import styles from './Dialog.module.css'
-import { dialogActions } from '../../features/dialogs/dialogSlice'
+import { tryToClose, dialogActions } from '../../features/dialogs/dialogSlice'
 import { DialogType, MaximizedValues, RootState } from '../../features/dialogs/types'
 import DialogContextMenu from '../DialogContextMenu'
 import { getDialog } from '../../features/dialogs/services'
@@ -145,7 +145,7 @@ export default function Dialog({ id, title, icon, config, children }: DialogType
 
   const close = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.stopPropagation()
-    dispatch(dialogActions.close({ id }))
+    dispatch(tryToClose({id}))
   }
 
   const contextMenuHandler = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {

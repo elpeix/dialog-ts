@@ -12,6 +12,12 @@ export type DialogType = DialogBasicType & {
 
 export type DialogsStateType = {
   dialogs: DialogType[],
+  confirmDialog: {
+    show: boolean,
+    title: string,
+    message: string,
+    id: string
+  },
   position: {
     left: number,
     top: number
