@@ -2,6 +2,7 @@ export type DialogBasicType = {
   id: string,
   title?: string,
   icon?: string,
+  closePrevented?: boolean,
   config: DialogConfigType
 }
 
@@ -15,6 +16,10 @@ export type DialogsStateType = {
     left: number,
     top: number
   } 
+}
+
+export type RootState = {
+  dialogsState: DialogsStateType
 }
 
 export const MaximizedValues = {

@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import { DraggableCore, DraggableEventHandler } from 'react-draggable'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import styles from './Dialog.module.css'
 import { dialogActions } from '../../features/dialogs/dialogSlice'
-import { DialogType, MaximizedValues } from '../../features/dialogs/types'
+import { DialogType, MaximizedValues, RootState } from '../../features/dialogs/types'
 import DialogContextMenu from '../DialogContextMenu'
+import { getDialog } from '../../features/dialogs/services'
 
 export default function Dialog({ id, title, icon, config, children }: DialogType ) {
 
@@ -23,6 +24,10 @@ export default function Dialog({ id, title, icon, config, children }: DialogType
   const [position, setPosition] = useState({x: 0, y: 0})
   const [slack, setSlack] = useState({x: 0, y: 0})
   const [dragToMaximize, setDragToMaximize] = useState<number>(MaximizedValues.NONE)
+
+  const dialogItem = useSelector<RootState>(state => 
+    getDialog(state.dialogsState.dialogs, id)
+  ) as DialogType
 
   const toTop = () => {
     dispatch(dialogActions.toTop({id: id}))
@@ -197,7 +202,11 @@ export default function Dialog({ id, title, icon, config, children }: DialogType
             <div className={`dialog-no-drag ${styles.header_action} ${styles.header_close}`} onClick={close} />
           </header>
           <div className={styles.content}>
-            {children}
+            {React.isValidElement(children) && React.cloneElement(children, {
+              ...children.props,
+              dialog: dialogItem,
+              dialogId: id
+            })}
           </div>
           <div className={styles.footer}>
             {config.resizable && !config.maximized && 

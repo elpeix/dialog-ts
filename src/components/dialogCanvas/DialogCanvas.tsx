@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { dialogActions, dialogsState } from '../../features/dialogs/dialogSlice'
-import { DialogsStateType, DialogType, MaximizedValues } from '../../features/dialogs/types'
+import { DialogsStateType, DialogType, MaximizedValues, RootState } from '../../features/dialogs/types'
 import styles from './DialogCanvas.module.css'
 import Menu from '../Menu'
 import Dialog from '../dialog/Dialog'
@@ -10,7 +10,7 @@ import Confirm from '../confirm/Confirm'
 
 export default function DialogCanvas() {
 
-  const { dialogs } = useSelector<DialogsStateType>(dialogsState) as DialogsStateType
+  const { dialogs } = useSelector<RootState>(dialogsState) as DialogsStateType
   const dispatch = useDispatch()
   const [confirm, setConfirm] = useState<JSX.Element | null>(null)
 

@@ -2,9 +2,9 @@ import { createSlice } from '@reduxjs/toolkit'
 import { 
   contextMenu, dialogExists, getMaxZIndex, hideContextMenu, setMaximize,
   toggleMaximize, toggleMinimize, toNext, toPrevious, toNextVisible, toPreviousVisible,
-  toTop, toTopPrevious 
+  toTop, toTopPrevious, getDialog 
 } from './services'
-import { DialogsStateType, MaximizedValues } from './types'
+import { DialogsStateType, MaximizedValues, RootState } from './types'
 
 const initialState: DialogsStateType = {
   dialogs: [],
@@ -15,7 +15,7 @@ const initialState: DialogsStateType = {
 }
 
 const dialogsSlice = createSlice({
-  name: 'dialogs',
+  name: 'dialogState',
   initialState,
   reducers: {
     create: (state: DialogsStateType, action) => {
@@ -40,6 +40,7 @@ const dialogsSlice = createSlice({
           resizable: action.payload.config.resizable ?? true,
           zIndex: getMaxZIndex(state.dialogs) + 1,
         },
+        closePrevented: false,
         children: action.payload.children
       })
       if (state.position.left > window.innerWidth - 130) { 
@@ -55,7 +56,18 @@ const dialogsSlice = createSlice({
         }  
       }
     },
+    setPreventClose: (state: DialogsStateType, action) => {
+      const dialog = getDialog(state.dialogs, action.payload.id)
+      if (dialog) {
+        dialog.closePrevented = action.payload.preventClose
+      }
+    },
     close: (state: DialogsStateType, action) => {
+      const dialog = getDialog(state.dialogs, action.payload.id)
+      if (dialog && dialog.closePrevented) {
+        dialog.closePrevented = false
+        return
+      }
       state.dialogs = state.dialogs.filter(dialog => dialog.id !== action.payload.id)
       toTopPrevious(state.dialogs)
       if (state.dialogs.length === 0) {
@@ -88,4 +100,4 @@ const dialogsSlice = createSlice({
 
 export default dialogsSlice.reducer
 export const dialogActions = dialogsSlice.actions
-export const dialogsState = (state: DialogsStateType) => state.dialogs
+export const dialogsState = (state: RootState) => state.dialogsState
