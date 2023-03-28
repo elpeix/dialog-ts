@@ -1,9 +1,24 @@
 
-import { DialogType, MaximizedValues } from './types'
+import { DialogsStateType, DialogType, MaximizedValues } from './types'
+
+export const initialState: DialogsStateType = {
+  dialogs: [],
+  confirmDialog: {
+    show: false,
+    title: '',
+    message: '',
+    id: ''
+  },
+  position: {
+    left: 20,
+    top: 20
+  }
+}
 
 export const dialogExists = (dialogs: DialogType[], id: string) => {
   return getDialog(dialogs, id) !== undefined
 }
+
 export const getDialog = (dialogs: DialogType[], id: string) => {
   return dialogs.find(dialog => dialog.id === id)
 }
@@ -43,7 +58,7 @@ export const toTop = (dialogs: DialogType[], id: string) => {
   })
 }
 
-export const toTopPrevious = (dialogs: DialogType[]) => {
+const toTopPrevious = (dialogs: DialogType[]) => {
   const maxZIndex = getMaxZIndex(dialogs)
   const dialog = dialogs.find(dialog => dialog.config.zIndex === maxZIndex)
   if (dialog) {
@@ -187,6 +202,15 @@ export const setMaximize = (dialogs: DialogType[], id: string, maximized: number
   }
 }
 
+export const forceCloseDialog = (state: DialogsStateType, id: string) => {
+  state.dialogs = state.dialogs.filter(dialog => dialog.id !== id)
+  toTopPrevious(state.dialogs)
+  if (state.dialogs.length === 0) {
+    state.position = initialState.position
+  }
+  state.confirmDialog = initialState.confirmDialog
+}
+
 export const contextMenu = (dialogs: DialogType[], id: string, x: number, y: number) => {
   const dialog = getDialog(dialogs, id)
   if (!dialog) {
@@ -207,6 +231,7 @@ export const hideContextMenu = (dialogs: DialogType[]) => {
     dialog.config.contextMenu = undefined
   })
 }
+
 const focusTopVisible = (dialogs: DialogType[], index: number) => {
   const visibleDialogs = dialogs.filter(dialog => !dialog.config.minimized)
   const maxZIndex = getMaxZIndex(visibleDialogs)

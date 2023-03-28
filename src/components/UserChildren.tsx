@@ -1,26 +1,38 @@
-import React from 'react'
-import { useDispatch } from 'react-redux'
-import { dialogActions } from '../features/dialogs/dialogSlice'
-import { DialogType } from '../features/dialogs/types'
+import React, { useState } from 'react'
+import { DialogContentProps } from '../features/dialogs/types'
+import { useDialog } from '../features/dialogs/useDialog'
 
-export function UserChildren({ dialogId, dialog }: { dialogId?: string, dialog?: DialogType }) {
+export function UserChildren({ dialogId, parentId }: DialogContentProps & { parentId?: string }) {
 
-  const dispatch = useDispatch()
+  const { setPreventClose } = useDialog({ id: dialogId || '' })
+  const { dialog: dialogParent, close: closeParent } = useDialog({ id: parentId || '' })
 
+  const [value, setValue] = useState('')
 
-  const handleChange = () => {
-    if (!dialog) return
-    dispatch(dialogActions.setPreventClose({ id: dialogId, preventClose: true }))
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPreventClose(true)
+    setValue(e.target.value)
   }
 
   return (
     <div>
       <h4>I am a new dialog!</h4>
       <p>My id is: {dialogId}</p>
-      <input type="text" onChange={handleChange} style={{
-        border: '1px solid #ccc',
+      <input
+        type="text"
+        onChange={handleChange}
+        value={value}
+        style={{ border: '1px solid #ccc' }} />
+      <p>My parent id is: {parentId}</p>
+      {
+        dialogParent && (
+          <p>
+            My parent is: {dialogParent.title}
+            <button onClick={() => { closeParent() }}>Close Parent</button>
+          </p>
 
-      }} />
+        )
+      }
     </div>
   )
 }

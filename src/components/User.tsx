@@ -1,14 +1,19 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { dialogActions } from '../features/dialogs/dialogSlice'
+import { DialogContentProps } from '../features/dialogs/types'
 import { UserChildren } from './UserChildren'
 
-export function User(props: { name: string; level: number }) {
+export function User({
+  dialogId,
+  name,
+  level,
+}: DialogContentProps & { name: string; level: number }) {
   const dispatch = useDispatch()
 
   const [user, setUser] = useState({
-    name: props.name,
-    level: props.level,
+    name: name,
+    level: level,
   })
 
   const openDialog = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -23,7 +28,7 @@ export function User(props: { name: string; level: number }) {
           resizable: false,
         },
         children: (
-          <UserChildren />
+          <UserChildren parentId={dialogId} />
         ),
       })
     )

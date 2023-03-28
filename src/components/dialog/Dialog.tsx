@@ -25,17 +25,10 @@ export default function Dialog({ id, title, icon, config, children }: DialogType
   const [slack, setSlack] = useState({x: 0, y: 0})
   const [dragToMaximize, setDragToMaximize] = useState<number>(MaximizedValues.NONE)
 
-  const dialogItem = useSelector<RootState>(state => 
-    getDialog(state.dialogsState.dialogs, id)
-  ) as DialogType
+  const dialogItem = useSelector<RootState>(state => getDialog(state.dialogsState.dialogs, id)) as DialogType
 
-  const toTop = () => {
-    dispatch(dialogActions.toTop({id: id}))
-  }
-
-  const toggleMaximize = () => {
-    dispatch(dialogActions.toggleMaximize({ id }))
-  }
+  const toTop = () => dispatch(dialogActions.toTop({id: id}))
+  const toggleMaximize = () => dispatch(dialogActions.toggleMaximize({ id }))
 
   const bounds = {
     top: -config.top,
@@ -149,7 +142,9 @@ export default function Dialog({ id, title, icon, config, children }: DialogType
   }
 
   const contextMenuHandler = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    dispatch(dialogActions.showContextMenu({id: id, event: e}))
+    e.stopPropagation()
+    e.preventDefault()
+    dispatch(dialogActions.showContextMenu({ id, x: e.clientX, y: e.clientY }))
   }
 
   const className = `

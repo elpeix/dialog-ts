@@ -2,33 +2,9 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { 
   contextMenu, dialogExists, getMaxZIndex, hideContextMenu, setMaximize,
   toggleMaximize, toggleMinimize, toNext, toPrevious, toNextVisible, toPreviousVisible,
-  toTop, getDialog, toTopPrevious 
+  toTop, getDialog, initialState, forceCloseDialog 
 } from './services'
 import { DialogsStateType, MaximizedValues, RootState } from './types'
-
-const initialState: DialogsStateType = {
-  dialogs: [],
-  confirmDialog: {
-    show: false,
-    title: '',
-    message: '',
-    id: ''
-  },
-  position: {
-    left: 20,
-    top: 20
-  }
-}
-
-const forceCloseDialog = (state: DialogsStateType, id: string) => {
-  state.dialogs = state.dialogs.filter(dialog => dialog.id !== id)
-  toTopPrevious(state.dialogs)
-  if (state.dialogs.length === 0) {
-    state.position = initialState.position
-  }
-  state.confirmDialog = initialState.confirmDialog
-}
-
 
 export const tryToClose = createAsyncThunk(
   'dialogsState/tryToClose',
@@ -105,11 +81,8 @@ const dialogsSlice = createSlice({
     toggleMaximize: (state: DialogsStateType, action) => toggleMaximize(state.dialogs, action.payload.id),
     setMaximize: (state: DialogsStateType, action) => setMaximize(state.dialogs, action.payload.id, action.payload.maximized),
     showContextMenu: (state: DialogsStateType, action) => {
-      const e = action.payload.event as React.MouseEvent<HTMLDivElement, MouseEvent>
-      e.preventDefault()
-      e.stopPropagation()
       hideContextMenu(state.dialogs)
-      contextMenu(state.dialogs, action.payload.id, e.clientX, e.clientY)
+      contextMenu(state.dialogs, action.payload.id, action.payload.x, action.payload.y)
     },
     hideContextMenu: (state: DialogsStateType, ) => hideContextMenu(state.dialogs),
     clearFocus: (state: DialogsStateType, ) => state.dialogs.forEach(dialog => dialog.config.focused = false),

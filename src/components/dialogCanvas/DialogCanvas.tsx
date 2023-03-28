@@ -27,6 +27,12 @@ export default function DialogCanvas() {
     // Show general context menu?
   }
 
+  const dialogContextMenuHandler = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, id: string) => {
+    e.stopPropagation()
+    e.preventDefault()
+    dispatch(dialogActions.showContextMenu({ id, x: e.clientX, y: e.clientY }))
+  }
+
   const closeAll = () => {
     if (dialogs.length > 0) {
       setConfirm(<Confirm
@@ -138,7 +144,7 @@ export default function DialogCanvas() {
                 `}
                 title={dialog.title}
                 onClick={() => dispatch(dialogActions.toTop({id: dialog.id}))}
-                onContextMenu={(e) => dispatch(dialogActions.showContextMenu({id: dialog.id, event: e}))}
+                onContextMenu={(e) => dialogContextMenuHandler(e, dialog.id)}
               > 
                 <div className={styles.tabIcon}>
                   {dialog.icon && <img src={dialog.icon} alt={dialog.title} /> }

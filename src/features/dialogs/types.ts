@@ -52,3 +52,7 @@ export type DialogConfigType = {
   },
   resizable: boolean
 }
+
+export type DialogContentProps = {
+  dialogId?: string,
+}
