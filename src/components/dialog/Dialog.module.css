@@ -9,6 +9,7 @@
   color: var(--d-d-color);
   overflow: hidden;
   transition:
+    background 0.1s ease-in-out,
     box-shadow 0.1s ease-in-out,
     opacity 0.1s ease-in-out;
 }
@@ -20,6 +21,14 @@
 
 .dialog.focused::after {
   display: none;
+}
+
+.dialog > * {
+  opacity: 0.8;
+}
+
+.dialog.focused > * {
+  opacity: 1;
 }
 
 .maximizeOverlay {
@@ -141,6 +150,8 @@
 }
 
 .focused {
+  background-color: var(--d-d-background-focused);
+  color: var(--d-d-color-focused);
   box-shadow: 1px 1px 4px rgb(60, 60, 60);
 }
 .maximized.focused {

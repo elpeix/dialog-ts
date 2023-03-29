@@ -21,15 +21,17 @@
   --d-fbt-radius: var(--d-radius);
   --d-fbti-size: 1.5rem;
 
-  --d-d-background: #f4f4f4;
+  --d-d-background: #ddd;
+  --d-d-background-focused: #f5f5f5;
   --d-d-color: var(--color);
-  --d-d-border: 1px solid var(--d-d-background);
+  --d-d-color-focused: var(--color);
+  --d-d-border: 0px solid var(--d-d-background);
   --d-d-border-radius: var(--d-radius);
   --d-d-shadow: 0 0 0.3rem 0 rgba(0, 0, 0, 0.5);
   --d-d-min-width: 12rem;
   --d-d-min-height: 12rem;
   --d-dh-height: 2rem;
-  --d-dh-background: var(--disabled-color);
+  --d-dh-background: #ddd;
   --d-dh-background-focused: var(--primary-color);
   --d-dh-border: none;
   --d-dh-border-radius: var(--d-radius) var(--d-radius) 0 0;

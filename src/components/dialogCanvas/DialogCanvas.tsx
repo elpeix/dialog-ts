@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { dialogActions, dialogsState, tryToClose } from '../../features/dialogs/dialogSlice'
-import { DialogsStateType, DialogType, MaximizedValues, RootState } from '../../features/dialogs/types'
+import { DialogsStateType, DialogType, MaximizedValues } from '../../features/dialogs/types'
 import styles from './DialogCanvas.module.css'
 import Menu from '../Menu'
 import Dialog from '../dialog/Dialog'
@@ -10,11 +10,11 @@ import Confirm from '../confirm/Confirm'
 
 export default function DialogCanvas() {
 
-  const { dialogs, confirmDialog } = useSelector<RootState>(dialogsState) as DialogsStateType
+  const { dialogs, confirmDialog } = useSelector(dialogsState) as DialogsStateType
   const dispatch = useDispatch()
   const [confirm, setConfirm] = useState<JSX.Element | null>(null)
 
-  const clickHandler = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const clickHandler = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       dispatch(dialogActions.clearFocus())
     }
@@ -27,7 +27,7 @@ export default function DialogCanvas() {
     // Show general context menu?
   }
 
-  const dialogContextMenuHandler = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, id: string) => {
+  const dialogContextMenuHandler = (e: React.MouseEvent, id: string) => {
     e.stopPropagation()
     e.preventDefault()
     dispatch(dialogActions.showContextMenu({ id, x: e.clientX, y: e.clientY }))
@@ -48,7 +48,7 @@ export default function DialogCanvas() {
 
   const getFocused = useCallback(() => dialogs.find((dialog: DialogType) => dialog.config.focused), [dialogs])
 
-  const keyDownHandler = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const keyDownHandler = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
       dispatch(dialogActions.hideContextMenu())
     }

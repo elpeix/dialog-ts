@@ -131,17 +131,17 @@ export default function Dialog({ id, title, icon, config, children }: DialogType
     document.body.addEventListener('mouseup', onMouseUp, { once: true })
   }
 
-  const toggleMinimize = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const toggleMinimize = (e: React.MouseEvent) => {
     e.stopPropagation()
     dispatch(dialogActions.toggleMinimize({ id }))
   }
 
-  const close = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const close = (e: React.MouseEvent) => {
     e.stopPropagation()
     dispatch(tryToClose({id}))
   }
 
-  const contextMenuHandler = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const contextMenuHandler = (e: React.MouseEvent) => {
     e.stopPropagation()
     e.preventDefault()
     dispatch(dialogActions.showContextMenu({ id, x: e.clientX, y: e.clientY }))

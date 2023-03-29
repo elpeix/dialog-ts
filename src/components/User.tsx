@@ -16,7 +16,7 @@ export function User({
     level: level,
   })
 
-  const openDialog = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const openDialog = (e: React.MouseEvent) => {
     e.stopPropagation()
     dispatch(
       dialogActions.create({
