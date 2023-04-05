@@ -1,16 +1,15 @@
 import React from 'react'
-import { useDispatch } from 'react-redux'
-import { dialogActions } from '../features/dialogs/dialogSlice'
 import { User } from './User'
 import userIcon from '../assets/user.svg'
+import { useDialogs } from '../hooks/useDialogs'
 
 export default function Menu() {
 
-  const dispatch = useDispatch()
+  const { create } = useDialogs()
 
   const createDialogSample = () => {
     const id = new Date().getTime().toString()
-    dispatch(dialogActions.create({
+    create({
       id: id,
       title: 'Dialog Sample',
       config: {
@@ -23,11 +22,11 @@ export default function Menu() {
           <p>{id}</p>
         </div>
       )
-    }))
+    })
   }
 
   const openUser = () => {
-    dispatch(dialogActions.create({
+    create({
       id: 'user',
       title: 'User',
       icon: userIcon,
@@ -36,7 +35,7 @@ export default function Menu() {
         height: 500
       },
       children: <User name="Bob" level={3} />
-    }))
+    })
   }
 
   return (

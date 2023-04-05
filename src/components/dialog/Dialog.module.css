@@ -150,7 +150,7 @@
 }
 
 .focused {
-  background-color: var(--d-d-background-focused);
+  background: var(--d-d-background-focused);
   color: var(--d-d-color-focused);
   box-shadow: 1px 1px 4px rgb(60, 60, 60);
 }

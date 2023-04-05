@@ -1,12 +1,11 @@
 import React, { useState } from 'react'
 import { DialogContentProps } from '../features/dialogs/types'
-import { useDialog } from '../features/dialogs/useDialog'
+import { useDialog } from '../hooks/useDialog'
 
-export function UserChildren({ dialogId, parentId }: DialogContentProps & { parentId?: string }) {
+export function UserChildren({ dialog, parentId }: DialogContentProps & { parentId?: string }) {
 
-  const { setPreventClose } = useDialog({ id: dialogId || '' })
+  const { setPreventClose } = useDialog({ id: dialog?.id || '' })
   const { dialog: dialogParent, close: closeParent } = useDialog({ id: parentId || '' })
-
   const [value, setValue] = useState('')
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -17,7 +16,7 @@ export function UserChildren({ dialogId, parentId }: DialogContentProps & { pare
   return (
     <div>
       <h4>I am a new dialog!</h4>
-      <p>My id is: {dialogId}</p>
+      <p>My id is: {dialog?.id}</p>
       <input
         type="text"
         onChange={handleChange}

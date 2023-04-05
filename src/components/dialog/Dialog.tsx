@@ -1,15 +1,23 @@
 import React, { useState } from 'react'
 import { DraggableCore, DraggableEventHandler } from 'react-draggable'
-import { useDispatch, useSelector } from 'react-redux'
 import styles from './Dialog.module.css'
-import { tryToClose, dialogActions } from '../../features/dialogs/dialogSlice'
-import { DialogType, MaximizedValues, RootState } from '../../features/dialogs/types'
+import { DialogType, MaximizedValues } from '../../features/dialogs/types'
 import DialogContextMenu from '../DialogContextMenu'
-import { getDialog } from '../../features/dialogs/services'
+import { useDialog } from '../../hooks/useDialog'
 
-export default function Dialog({ id, title, icon, config, children }: DialogType ) {
+export default function Dialog({ id, title, icon, config, children }: DialogType) {
 
-  const dispatch = useDispatch()
+  const { 
+    dialog: dialogItem,
+    close,
+    toTop,
+    maximize,
+    toggleMaximize,
+    toggleMinimize,
+    restore,
+    showContextMenu,
+    hideContextMenu
+  } = useDialog({ id })
 
   const [dialog, setDialog] = useState({
     width: config.width || 400,
@@ -21,24 +29,19 @@ export default function Dialog({ id, title, icon, config, children }: DialogType
   const [dragging, setDragging] = useState(false)
   const [dragged, setDragged] = useState(false)
   const [resizing, setResizing] = useState(false)
-  const [position, setPosition] = useState({x: 0, y: 0})
-  const [slack, setSlack] = useState({x: 0, y: 0})
+  const [position, setPosition] = useState({ x: 0, y: 0 })
+  const [slack, setSlack] = useState({ x: 0, y: 0 })
   const [dragToMaximize, setDragToMaximize] = useState<number>(MaximizedValues.NONE)
-
-  const dialogItem = useSelector<RootState>(state => getDialog(state.dialogsState.dialogs, id)) as DialogType
-
-  const toTop = () => dispatch(dialogActions.toTop({id: id}))
-  const toggleMaximize = () => dispatch(dialogActions.toggleMaximize({ id }))
 
   const bounds = {
     top: -config.top,
     left: -config.left,
     bottom: window.innerHeight - (80 + config.top),
-    right: window.innerWidth - (30 + config.left) 
+    right: window.innerWidth - (30 + config.left)
   }
 
   const startHandler: DraggableEventHandler = (e, data) => {
-    dispatch(dialogActions.hideContextMenu())
+    hideContextMenu()
     setDragging(true)
     setDragged(false)
     toTop()
@@ -66,10 +69,10 @@ export default function Dialog({ id, title, icon, config, children }: DialogType
     setDragged(true)
 
     const newPos = { x: position.x + data.deltaX, y: position.y + data.deltaY }
-    const {x, y} = newPos
+    const { x, y } = newPos
     newPos.x += slack.x
     newPos.y += slack.y
-    if (bounds)  {
+    if (bounds) {
       newPos.x = Math.min(Math.max(bounds.left, newPos.x), bounds.right)
       newPos.y = Math.min(Math.max(bounds.top, newPos.y), bounds.bottom)
     }
@@ -77,7 +80,7 @@ export default function Dialog({ id, title, icon, config, children }: DialogType
 
     if (config.maximized !== MaximizedValues.NONE) {
       if (config.top + y > 20) {
-        dispatch(dialogActions.setMaximize({id: id, maximized: MaximizedValues.NONE}))
+        restore()
       }
     } else if (config.resizable) {
       if (data.y < 0) {
@@ -96,11 +99,11 @@ export default function Dialog({ id, title, icon, config, children }: DialogType
   const stopHandler: DraggableEventHandler = () => {
     if (!dragging) return
     if (dragged) {
-      dispatch(dialogActions.setMaximize({id: id, maximized: dragToMaximize}))
+      maximize(dragToMaximize)
       setDragToMaximize(MaximizedValues.NONE)
     }
     setDragging(false)
-    setSlack({x: 0, y: 0})
+    setSlack({ x: 0, y: 0 })
   }
 
   const handleResize = (mouseDownEvent: { pageX: number; pageY: number }) => {
@@ -131,20 +134,20 @@ export default function Dialog({ id, title, icon, config, children }: DialogType
     document.body.addEventListener('mouseup', onMouseUp, { once: true })
   }
 
-  const toggleMinimize = (e: React.MouseEvent) => {
+  const toggleMinimizeHandler = (e: React.MouseEvent) => {
     e.stopPropagation()
-    dispatch(dialogActions.toggleMinimize({ id }))
+    toggleMinimize()
   }
 
-  const close = (e: React.MouseEvent) => {
+  const closeHandler = (e: React.MouseEvent) => {
     e.stopPropagation()
-    dispatch(tryToClose({id}))
+    close()
   }
 
   const contextMenuHandler = (e: React.MouseEvent) => {
     e.stopPropagation()
     e.preventDefault()
-    dispatch(dialogActions.showContextMenu({ id, x: e.clientX, y: e.clientY }))
+    showContextMenu({ x: e.clientX, y: e.clientY })
   }
 
   const className = `
@@ -164,18 +167,18 @@ export default function Dialog({ id, title, icon, config, children }: DialogType
     left: `${dialog.left}px`,
     height: `${dialog.height}px`,
     width: `${dialog.width}px`,
-    transform :`translate(${position.x}px, ${position.y}px)`
+    transform: `translate(${position.x}px, ${position.y}px)`
   }
 
   return (
     <>
       <DraggableCore
-        handle="header.dialog-drag" 
+        handle="header.dialog-drag"
         cancel=".dialog-no-drag"
         onStart={startHandler}
         onDrag={dragHandler}
         onStop={stopHandler}
-      > 
+      >
         <div
           className={className}
           style={dialogStyle}
@@ -187,38 +190,37 @@ export default function Dialog({ id, title, icon, config, children }: DialogType
               {icon && <img src={icon} />}
             </div>
             <div className={styles.header_title}>{title}</div>
-            <div className={`dialog-no-drag ${styles.header_action} ${styles.header_minimize}`} onClick={toggleMinimize} />
-            { config.resizable && config.maximized === MaximizedValues.NONE &&
+            <div className={`dialog-no-drag ${styles.header_action} ${styles.header_minimize}`} onClick={toggleMinimizeHandler} />
+            {config.resizable && config.maximized === MaximizedValues.NONE &&
               <div className={`dialog-no-drag ${styles.header_action} ${styles.header_maximize}`} onClick={toggleMaximize} />
             }
-            { config.resizable && config.maximized !== MaximizedValues.NONE &&
+            {config.resizable && config.maximized !== MaximizedValues.NONE &&
               <div className={`dialog-no-drag ${styles.header_action} ${styles.header_restore}`} onClick={toggleMaximize} />
             }
-            <div className={`dialog-no-drag ${styles.header_action} ${styles.header_close}`} onClick={close} />
+            <div className={`dialog-no-drag ${styles.header_action} ${styles.header_close}`} onClick={closeHandler} />
           </header>
           <div className={styles.content}>
             {React.isValidElement(children) && React.cloneElement(children, {
               ...children.props,
-              dialog: dialogItem,
-              dialogId: id
+              dialog: dialogItem
             })}
           </div>
           <div className={styles.footer}>
-            {config.resizable && !config.maximized && 
+            {config.resizable && !config.maximized &&
               <div className={styles.resizer} onMouseDown={handleResize}></div>
             }
           </div>
         </div>
       </DraggableCore>
       {!config.maximized && dragging &&
-        <div 
+        <div
           className={`
             ${styles.maximizeOverlay} 
             ${dragToMaximize !== MaximizedValues.NONE ? styles.maximizeOverlayActive : ''}
             ${dragToMaximize === MaximizedValues.FULL ? styles.maximizeOverlayFull : ''}
             ${dragToMaximize === MaximizedValues.LEFT ? styles.maximizeOverlayLeft : ''}
-            ${dragToMaximize === MaximizedValues.RIGHT ? styles.maximizeOverlayRight : ''}`} 
-          style={{zIndex: config.zIndex + 1}}></div>
+            ${dragToMaximize === MaximizedValues.RIGHT ? styles.maximizeOverlayRight : ''}`}
+          style={{ zIndex: config.zIndex + 1 }}></div>
       }
       <DialogContextMenu id={id} config={config} title={title} />
     </>

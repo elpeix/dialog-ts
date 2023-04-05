@@ -31,7 +31,7 @@
   --d-d-min-width: 12rem;
   --d-d-min-height: 12rem;
   --d-dh-height: 2rem;
-  --d-dh-background: #ddd;
+  --d-dh-background: #ffffff00;
   --d-dh-background-focused: var(--primary-color);
   --d-dh-border: none;
   --d-dh-border-radius: var(--d-radius) var(--d-radius) 0 0;

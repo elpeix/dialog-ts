@@ -1,45 +1,60 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { dialogActions, dialogsState, tryToClose } from '../../features/dialogs/dialogSlice'
-import { DialogsStateType, DialogType, MaximizedValues } from '../../features/dialogs/types'
+import { DialogType, MaximizedValues } from '../../features/dialogs/types'
 import styles from './DialogCanvas.module.css'
 import Menu from '../Menu'
 import Dialog from '../dialog/Dialog'
 import DialogContextMenu from '../DialogContextMenu'
 import Confirm from '../confirm/Confirm'
+import { useDialogs } from '../../hooks/useDialogs'
 
 export default function DialogCanvas() {
 
-  const { dialogs, confirmDialog } = useSelector(dialogsState) as DialogsStateType
-  const dispatch = useDispatch()
+  const { 
+    dialogs,
+    confirmDialog,
+    clearFocus,
+    hideContextMenu,
+    closeAll,
+    hideCloseConfirm,
+    toNextVisible,
+    toPreviousVisible,
+    toPrevious,
+    toNext,
+    toTop,
+    setMaximize,
+    showContextMenu,
+    close,
+    forceClose,
+  } = useDialogs()
+
   const [confirm, setConfirm] = useState<JSX.Element | null>(null)
 
   const clickHandler = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      dispatch(dialogActions.clearFocus())
+      clearFocus()
     }
-    dispatch(dialogActions.hideContextMenu())
+    hideContextMenu()
   }
 
   const contextMenuHandler = () => {
     // e.preventDefault() // Comment out to show general context menu
-    dispatch(dialogActions.hideContextMenu())
+    hideContextMenu()
     // Show general context menu?
   }
 
   const dialogContextMenuHandler = (e: React.MouseEvent, id: string) => {
     e.stopPropagation()
     e.preventDefault()
-    dispatch(dialogActions.showContextMenu({ id, x: e.clientX, y: e.clientY }))
+    showContextMenu(id, e.clientX, e.clientY)
   }
 
-  const closeAll = () => {
+  const closeAllHandler = () => {
     if (dialogs.length > 0) {
       setConfirm(<Confirm
         confirmText="Close all dialogs?"
         onCancel={() => setConfirm(null)}
         onConfirm={() => {
-          dispatch(dialogActions.closeAll())
+          closeAll()
           setConfirm(null)
         }}
       />)
@@ -50,18 +65,18 @@ export default function DialogCanvas() {
 
   const keyDownHandler = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
-      dispatch(dialogActions.hideContextMenu())
+      hideContextMenu()
     }
     if (e.key.toLowerCase() === 'q' && e.altKey && e.shiftKey) {
-      closeAll()
+      closeAllHandler()
     }
     if (e.key === 'ArrowRight' && e.altKey) {
       e.preventDefault()
-      dispatch(dialogActions.toNextVisible())
+      toNextVisible()
     }
     if (e.key === 'ArrowLeft' && e.altKey) {
       e.preventDefault()
-      dispatch(dialogActions.toPreviousVisible())
+      toPreviousVisible()
     }
 
     const focused = getFocused()
@@ -70,28 +85,28 @@ export default function DialogCanvas() {
         return
       }
       if (e.shiftKey) {
-        dispatch(dialogActions.toPrevious())
+        toPrevious()
       } else {
-        dispatch(dialogActions.toNext())
+        toNext()
       }
     }
     if (!focused) {
       return
     }
     if (e.key.toLocaleLowerCase() === 'w' && e.altKey && e.shiftKey) {
-      dispatch(tryToClose({ id: focused.id }))
+      close(focused.id)
     }
     if (e.key === 'ArrowUp' && e.altKey && e.shiftKey) {
-      dispatch(dialogActions.setMaximize({id: focused.id, maximized: MaximizedValues.FULL}))
+      setMaximize(focused.id,MaximizedValues.FULL)
     }
     if (e.key === 'ArrowLeft' && e.altKey && e.shiftKey) {
-      dispatch(dialogActions.setMaximize({id: focused.id, maximized: MaximizedValues.LEFT}))
+      setMaximize(focused.id,MaximizedValues.LEFT)
     }
     if (e.key === 'ArrowRight' && e.altKey && e.shiftKey) {
-      dispatch(dialogActions.setMaximize({id: focused.id, maximized: MaximizedValues.RIGHT}))
+      setMaximize(focused.id,MaximizedValues.RIGHT)
     }
     if (e.key === 'ArrowDown' && e.altKey && e.shiftKey) {
-      dispatch(dialogActions.setMaximize({id: focused.id, maximized: MaximizedValues.NONE}))
+      setMaximize(focused.id,MaximizedValues.NONE)
     }
   }
 
@@ -100,17 +115,18 @@ export default function DialogCanvas() {
       setConfirm(<Confirm
         confirmText={confirmDialog.title}
         onCancel={() => {
-          dispatch(dialogActions.hideCloseConfirm())
+          hideCloseConfirm()
           setConfirm(null)
         }}
         onConfirm={() => {
-          dispatch(dialogActions.hideCloseConfirm())
-          dispatch(dialogActions.forceClose({ id: confirmDialog.id }))
+          hideCloseConfirm()
+          forceClose(confirmDialog.id)
           setConfirm(null)
         }}
       />)
     }
-  }, [confirmDialog, dispatch])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [confirmDialog])
 
   return (
     <div 
@@ -143,7 +159,7 @@ export default function DialogCanvas() {
                   ${dialog.config.minimized ? styles.minimized : ''}
                 `}
                 title={dialog.title}
-                onClick={() => dispatch(dialogActions.toTop({id: dialog.id}))}
+                onClick={() => toTop(dialog.id)}
                 onContextMenu={(e) => dialogContextMenuHandler(e, dialog.id)}
               > 
                 <div className={styles.tabIcon}>
@@ -155,7 +171,7 @@ export default function DialogCanvas() {
             </React.Fragment>
           ))}
         </div>
-        { dialogs.length ? <button onClick={closeAll}>Close All</button> : null }
+        { dialogs.length ? <button onClick={closeAllHandler}>Close All</button> : null }
       </div>
       {confirm}
     </div>

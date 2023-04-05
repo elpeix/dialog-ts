@@ -53,6 +53,20 @@ export type DialogConfigType = {
   resizable: boolean
 }
 
+export type DialogCreateType = {
+  id: string,
+  title?: string,
+  icon?: string,
+  config: {
+    width: number,
+    height: number,
+    parent?: string,
+    resizable?: boolean
+  },
+  children: React.ReactNode
+}
+
 export type DialogContentProps = {
   dialogId?: string,
+  dialog?: DialogType,
 }
